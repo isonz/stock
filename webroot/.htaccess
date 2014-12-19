@@ -1,0 +1,5 @@
+RewriteEngine On
+DirectoryIndex index.php
+RewriteCond %{REQUEST_URI} !^/(images|css|js|html)/
+RewriteRule . index.php [L]
+
