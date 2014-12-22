@@ -52,13 +52,7 @@ $GLOBALS['CONFIG_DATABASE'] = array(
 	'tb_prefix' => ''
 );
 
-$GLOBALS['CONFIG_SMTP'] = array(
-	'server' 	=> "smtp.163.com",
-	'port' 		=> 25,
-	'email' 	=> "zxskigg@163.com",
-	'user' 		=> "zxskigg",
-	'passwd' 	=> "123456"
-);
+require_once 'setting.php';
 
 
 

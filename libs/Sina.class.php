@@ -1,18 +1,13 @@
 <?php
-class Common
+class Sina
 {
-	//从JSON页面获取数据并转化成PHP数组形式
-    static function getUrlJsonContentToArray($url, $encoding)
+	//获取总记录数
+    static function getStockCount($url, $encoding)
     {
     	if(!$url) return false;
-		$domain = Func::getUrlDomain($url);
-		//$content = file_get_contents($url);
-		$content = Func::curlChangeIp($url);
+		$content = Func::curlGet($url);
 		$content = mb_convert_encoding($content, _ENCODING, $encoding);
-		//$content = self::replaceSymbol($content);
-		//$content = self::replaceBrackets($content);
-		$content = json_decode($content, true);
-		if((isset($content['status']) && isset($content['wait']))) exit('请求主体网站受限!稍后再试:'.$url);
+		$content = Func::strFindNum($content);
 		return $content;
     }
     

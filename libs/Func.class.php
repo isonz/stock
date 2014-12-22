@@ -208,7 +208,6 @@ class Func
 			"CLIENT-IP:$ip",
 			"X-FORWARDED-FOR:$ip",
 		);		
-
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
@@ -217,6 +216,92 @@ class Func
 		//var_dump(curl_getinfo($ch));
 		curl_close($ch);
 		return $content;
+	}
+	
+	static function curlPost($url,array $data)
+	{
+		if(!$url || !$data) return false;
+	
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_POST,true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch,CURLOPT_TIMEOUT,5);
+		$content = curl_exec($ch);
+		curl_close($ch);
+	
+		return $content;
+	}
+	
+	static function curlGet($url)
+	{
+		if(!$url) return false;
+		$header[] = "Content-type: text/xml";
+		
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+		curl_setopt($ch,CURLOPT_TIMEOUT,5);
+		$content = curl_exec($ch);
+		curl_close($ch);
+	
+		return $content;
+	}
+	
+	//限制显示的字符数，{$content|strip_tags|truncate_cn=460,'..',0}
+	static function truncate_cn($string,$length=0,$ellipsis='…',$start=0)
+	{
+		$string=strip_tags($string);
+		$string=preg_replace('/\n/is','',$string);
+		//$string=preg_replace('/ |　/is','',$string);//清除字符串中的空格
+		$string=preg_replace('/&nbsp;/is','',$string);
+		preg_match_all("/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xef][\x80-\xbf][\x80-\xbf]|\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf7][\x80-\xbf][\x80-\xbf][\x80-\xbf]/",$string,$string);
+		if(is_array($string)&&!empty($string[0])){
+			$string=implode('',$string[0]);
+			if(strlen($string)<$start+1)return '';
+			preg_match_all("/./su",$string,$ar);
+			$string2='';
+			$tstr='';
+			for($i=0;isset($ar[0][$i]);$i++){
+				if(strlen($tstr)<$start){
+					$tstr.=$ar[0][$i];
+				}else{
+					if(strlen($string2)<$length+strlen($ar[0][$i])){
+						$string2.=$ar[0][$i];
+					}else{
+						break;
+					}
+				}
+			}
+			return $string==$string2?$string2:$string2.$ellipsis;
+		}else{
+			$string='';
+		}
+		return $string;
+	}
+	
+	//获取上一个月或者下一个月的时间
+	static function getMonth($date, $flag='-1')
+	{
+		$time = strtotime("$date  $flag month");
+		return array('zh'=>date("Y年m月",$time), 'date'=>date("Y-m",$time));
+	}
+	
+	//字符串中查找数字。
+	static function strFindNum($str)
+	{
+		$str=trim($str);
+		if(empty($str)){return '';}
+		$result='';
+		for($i=0;$i<strlen($str);$i++){
+			if(is_numeric($str[$i])){
+				$result.=$str[$i];
+			}
+		}
+		return (int)$result;
 	}
 	
 }
