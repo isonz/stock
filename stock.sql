@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50524
 File Encoding         : 65001
 
-Date: 2014-12-22 15:20:56
+Date: 2014-12-22 20:24:05
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -44,12 +44,27 @@ CREATE TABLE `sk_datas` (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for sk_setting
+-- ----------------------------
+DROP TABLE IF EXISTS `sk_setting`;
+CREATE TABLE `sk_setting` (
+  `name` varchar(20) NOT NULL,
+  `value` text,
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of sk_setting
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for sk_stock
 -- ----------------------------
 DROP TABLE IF EXISTS `sk_stock`;
 CREATE TABLE `sk_stock` (
   `ticker` char(8) NOT NULL,
   `name` varchar(15) NOT NULL,
+  `update_at` int(11) unsigned DEFAULT '0',
   PRIMARY KEY (`ticker`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
