@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50524
 File Encoding         : 65001
 
-Date: 2014-12-22 20:24:05
+Date: 2014-12-23 00:32:25
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -56,6 +56,10 @@ CREATE TABLE `sk_setting` (
 -- ----------------------------
 -- Records of sk_setting
 -- ----------------------------
+INSERT INTO `sk_setting` VALUES ('SINA_ENCODE', 'GBK');
+INSERT INTO `sk_setting` VALUES ('SINA_STOCK_COUNT_URL', 'http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeStockCount?node=hs_a');
+INSERT INTO `sk_setting` VALUES ('SINA_STOCK_PAGE_URL', 'http://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData?page=1&num=80&sort=symbol&asc=1&node=hs_a&symbol=&_s_r_a=page');
+INSERT INTO `sk_setting` VALUES ('SINA_STOCK_RUN', '{\"SINA_STOCK_COUNT\":2557,\"SINA_STOCK_COUNT_DATE\":1419206400}');
 
 -- ----------------------------
 -- Table structure for sk_stock

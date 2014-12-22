@@ -10,7 +10,7 @@ Abstract class ABase
 		}
 	}
 	
-	static function insert($data)
+	static function insert(array $data)
 	{
 		self::_init();
 		return DB::Insert(static::$_table, $data);
@@ -29,7 +29,7 @@ Abstract class ABase
 		return DB::getRows(static::$_table);
 	}
 	
-	static function getOne($where,  $select = '*')
+	static function getOne(array $where,  $select = '*')
 	{
 		if(!$where) return false;
 		self::_init();
@@ -43,7 +43,7 @@ Abstract class ABase
 		return DB::getRows(static::$_table, $where, $select, $order);
 	}
 	
-    static function update($condition, $data)
+    static function update($condition, array $data)
     {
     	self::_init();
     	return DB::update(static::$_table, $condition, $data);

@@ -49,10 +49,5 @@ $GLOBALS['CONFIG_DATABASE'] = array(
     'pwd'       => 'admin888',
     'dbname'    => 'stock',
 	'port'      => 3306,
-	'tb_prefix' => ''
+	'tb_prefix' => 'sk_'
 );
-
-require_once 'setting.php';
-
-
-
