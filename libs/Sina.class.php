@@ -4,11 +4,28 @@ class Sina
 	//入口函数，运行
 	static function run()
 	{
-		$week = date('w');
-		if(6==$week || 0==$week) exit('Over Day.');
+		if(self::stopDay()) return false;
 		$count = self::getStockCount();
 		$page_urls = self::getPageUrls($count, 80);
 		self::getStockData($page_urls);
+	}
+	
+	//获取停止交易日
+	static function stopDay()
+	{
+		$stopinfo = Setting::getValue('STOCK_STOP_DAY');
+		if(!$stopinfo) true;
+		$stopinfo = explode(',', $stopinfo);
+		foreach ($stopinfo as $stopday){
+			if(1==strlen($stopday)){
+				$week = date('w');
+				if($stopday==$week || $stopday==$week) return true;
+			}else{
+				$day = date('Y-m-d');
+				if($day == $stopday) return true;
+			}
+		}
+		return false;
 	}
 	
 	//获取运行设置数据
@@ -26,8 +43,8 @@ class Sina
     	//先查询数据库是否有今天的设置数据
     	$runinfo = self::getRunInfo();
     	$count = isset($runinfo['SINA_STOCK_COUNT']) ? (int)$runinfo['SINA_STOCK_COUNT'] : 0;
-    	$count_date = isset($runinfo['SINA_STOCK_COUNT_DATE']) ? (int)$runinfo['SINA_STOCK_COUNT_DATE'] : 0;
-    	if($count>0 && $count_date==strtotime(date('Y-m-d'))) return $count;
+    	$count_date = isset($runinfo['SINA_STOCK_COUNT_DATE']) ? $runinfo['SINA_STOCK_COUNT_DATE'] : null;
+    	if($count>0 && $count_date==date('Y-m-d')) return $count;
     	
     	//没有今天的设置数据再请求网站上的
     	$url = Setting::getValue('SINA_STOCK_COUNT_URL');
@@ -39,7 +56,7 @@ class Sina
 		
 		//把网站上的数据存入设置数据表
 		$runinfo['SINA_STOCK_COUNT'] = $content;
-		$runinfo['SINA_STOCK_COUNT_DATE'] = strtotime(date('Y-m-d'));
+		$runinfo['SINA_STOCK_COUNT_DATE'] = date('Y-m-d');
 		Setting::setValue('SINA_STOCK_RUN', json_encode($runinfo));
 		
 		return $content;
@@ -76,8 +93,8 @@ class Sina
     	//查询数据库当前运行到哪一页
     	$runinfo = self::getRunInfo();
     	$page = isset($runinfo['SINA_STOCK_RUN_PAGE']) ? (int)$runinfo['SINA_STOCK_RUN_PAGE'] : 0;
-    	$page_date = isset($runinfo['SINA_STOCK_RUN_PAGE_DATE']) ? (int)$runinfo['SINA_STOCK_RUN_PAGE_DATE'] : 0;
-    	if($page_date != strtotime(date('Y-m-d'))) $page = 0;
+    	$page_date = isset($runinfo['SINA_STOCK_RUN_PAGE_DATE']) ? $runinfo['SINA_STOCK_RUN_PAGE_DATE'] : null;
+    	if($page_date != date('Y-m-d')) $page = 0;
     	if($page >= count($urls)) {
     		exit('Over Page.');
     		return $page;
@@ -99,9 +116,9 @@ class Sina
     		
     		//把当前运行的页码存入设置数据表
     		$runinfo['SINA_STOCK_RUN_PAGE'] = $i;
-    		$runinfo['SINA_STOCK_RUN_PAGE_DATE'] = strtotime(date('Y-m-d'));
+    		$runinfo['SINA_STOCK_RUN_PAGE_DATE'] = date('Y-m-d');
     		Setting::setValue('SINA_STOCK_RUN', json_encode($runinfo));
-    		sleep(1);
+    		sleep(5);
     		echo "$i <br>";
     	}
     }

@@ -26,6 +26,9 @@ class Datas extends ABase
 			Stock::setStock($ticker, $name);
 			return self::insert($data);
 		}else{
+			$name = $data['name'];
+			unset($data['name']);
+			Stock::setStock($ticker, $name);
 			return self::update(array('ticker'=>$ticker, "days" => $days), $data);
 		}
 	}

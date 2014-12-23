@@ -14,7 +14,7 @@ class Stock extends ABase
 	static function setStock($ticker, $name)
 	{
 		//DB::Debug();
-		$date_time = strtotime(date('Y-m-d'));
+		$date_time = date('Y-m-d');
 		$info = self::getStock($ticker);
 		if(!$info){
 			return self::insert(array('ticker'=>$ticker, 'name'=>$name, 'update_at'=>$date_time));
