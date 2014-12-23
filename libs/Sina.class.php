@@ -4,9 +4,11 @@ class Sina
 	//入口函数，运行
 	static function run()
 	{
+		$week = date('w');
+		if(6==$week || 0==$week) exit('Over Day.');
 		$count = self::getStockCount();
 		$page_urls = self::getPageUrls($count, 80);
-		self::getPageData($page_urls);
+		self::getStockData($page_urls);
 	}
 	
 	//获取运行设置数据
@@ -67,7 +69,7 @@ class Sina
     	return $urls;
     }
 
-    static function getPageData($urls)
+    static function getStockData($urls)
     {
     	if(!$urls) return false;
 
@@ -76,7 +78,10 @@ class Sina
     	$page = isset($runinfo['SINA_STOCK_RUN_PAGE']) ? (int)$runinfo['SINA_STOCK_RUN_PAGE'] : 0;
     	$page_date = isset($runinfo['SINA_STOCK_RUN_PAGE_DATE']) ? (int)$runinfo['SINA_STOCK_RUN_PAGE_DATE'] : 0;
     	if($page_date != strtotime(date('Y-m-d'))) $page = 0;
-    	if($page >= count($urls)) return $page;
+    	if($page >= count($urls)) {
+    		exit('Over Page.');
+    		return $page;
+    	}
     	
     	$encoding = Setting::getValue('SINA_ENCODE');
     	if(!$encoding) $encoding = 'GBK';
