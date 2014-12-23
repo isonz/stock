@@ -73,22 +73,51 @@ class Sina
 
     	//查询数据库当前运行到哪一页
     	$runinfo = self::getRunInfo();
-    	$page = isset($runinfo['SINA_STOCK_RUN_PAGE']) ? (int)$runinfo['SINA_STOCK_RUN_PAGE'] : 1;
+    	$page = isset($runinfo['SINA_STOCK_RUN_PAGE']) ? (int)$runinfo['SINA_STOCK_RUN_PAGE'] : 0;
     	$page_date = isset($runinfo['SINA_STOCK_RUN_PAGE_DATE']) ? (int)$runinfo['SINA_STOCK_RUN_PAGE_DATE'] : 0;
-    	if($page_date != strtotime(date('Y-m-d'))) $page = 1;
+    	if($page_date != strtotime(date('Y-m-d'))) $page = 0;
     	if($page >= count($urls)) return $page;
     	
     	$encoding = Setting::getValue('SINA_ENCODE');
     	if(!$encoding) $encoding = 'GBK';
-    	foreach ($urls as $url){
+    	for($i=$page+1; $i <=count($urls); $i++){
+    		$url = $urls[$i];
     		$content = Func::curlGet($url);
     		$content = mb_convert_encoding($content, _ENCODING, $encoding);
-    		var_dump($content);
+    		$content = self::strToJson($content);
     		$content = json_decode($content, true);
-    		var_dump($content); exit;
+    		foreach ($content as $data){
+    			$ticker = $data['symbol'];
+    			unset($data['symbol'], $data['code'], $data['ticktime']);
+    			Datas::setData($ticker, $data);
+    		}
+    		
+    		//把当前运行的页码存入设置数据表
+    		$runinfo['SINA_STOCK_RUN_PAGE'] = $i;
+    		$runinfo['SINA_STOCK_RUN_PAGE_DATE'] = strtotime(date('Y-m-d'));
+    		Setting::setValue('SINA_STOCK_RUN', json_encode($runinfo));
+    		sleep(1);
+    		echo "$i <br>";
     	}
     }
 
+    static function strToJson($str)
+    {
+    	$json = '';
+    	for($i=0; $i<strlen($str); $i++){
+    		$strh = isset($str[$i-1]) ? $str[$i-1] : null;
+    		$stri = $str[$i];
+    		$strj = isset($str[$i+1]) ? $str[$i+1] : null;
+    		if('{'==$stri || (','==$stri && '{'!=$strj)){
+    			$json .= $stri.'"';
+    		}else if(':' == $stri && !is_numeric($strh)){
+    			$json .= '"'.$stri;
+    		}else{
+    			$json .= $stri;
+    		}
+    	}
+    	return $json;
+    }
     
 }
 
