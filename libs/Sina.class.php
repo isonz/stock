@@ -195,11 +195,7 @@ class Sina
     	if(!$url) return false;
     	$html = file_get_html($url);
     	if(!$html) return false;
-    	foreach ($html->find("#CirculateShareholderTable") as $table){
-    		$tmp['type'] = 'holder';
-    		$tmp['data'] = $table->plaintext;
-    		TmpData::setData($tmp);
-    		
+    	foreach ($html->find("#CirculateShareholderTable") as $table){    		
     		$datas = self::ltHolderPageCodeFormat($table->plaintext);
     		foreach ($datas as $date => $data){
     			foreach ($data as $dt){
@@ -231,6 +227,11 @@ class Sina
     	$str = strip_tags($str);
     	$str = str_replace("&nbsp;", '', $str);
     	$str = preg_replace('/\s+/', "-||-" ,$str);
+    	
+    	$tmp['type'] = 'holder';
+    	$tmp['data'] = $str;
+    	TmpData::setData($tmp);
+    	
     	$arr = explode('-||-', $str);
     	$data = array();
     	$tmp_date = null;
