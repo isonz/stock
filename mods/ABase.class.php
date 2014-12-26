@@ -68,7 +68,10 @@ Abstract class ABase
     	return $result;
     }
     
-    
+    static function log($error)
+    {
+    	error_log(date('Y-m-d H:i:s').", Error:".$error."\n\t", 3, _LOGS . 'code.'.date('Ymd').'.log');
+    }
     
 }
 

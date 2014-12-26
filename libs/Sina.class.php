@@ -1,8 +1,9 @@
 <?php
 class Sina
 {
-	//入口函数，运行
-	static function run()
+	//---------------------------------------- 数据
+	//数据入口函数，运行
+	static function dataRun()
 	{
 		if(self::stopDay()) return false;
 		$count = self::getStockCount();
@@ -106,6 +107,11 @@ class Sina
     		$url = $urls[$i];
     		$content = Func::curlGet($url);
     		$content = mb_convert_encoding($content, _ENCODING, $encoding);
+    		
+    		$tmp['type'] = 'datas';
+    		$tmp['data'] = $content;
+    		TmpData::setData($tmp);
+    		
     		$content = self::strToJson($content);
     		$content = json_decode($content, true);
     		foreach ($content as $data){
@@ -119,7 +125,7 @@ class Sina
     		$runinfo['SINA_STOCK_RUN_PAGE_DATE'] = date('Y-m-d');
     		Setting::setValue('SINA_STOCK_RUN', json_encode($runinfo));
     		sleep(5);
-    		echo "$i <br>";
+    		//echo "$i <br>";
     	}
     }
 
@@ -140,6 +146,120 @@ class Sina
     	}
     	return $json;
     }
+    
+    
+    //---------------------------------------------- 股东
+    //股东入口函数，运行
+    static function holderRun()
+    {
+    	if(!self::publishDate()) return false;
+    	if(!defined('_HTMLDOM')){
+    		define('_HTMLDOM', _LIBS . 'Htmldom' . DS);
+    	}
+    	foreach (glob(_HTMLDOM."/*.php") as $htmldom){
+    		require_once $htmldom;
+    	}
+    	self::getHolderData();
+    }
+    
+    //公布股东组成日期
+    static function publishDate()
+    {
+    	$date = (int)date('d');
+    	if (30 == $date || 26 == $date) return true;
+    	return false;
+    }
+    
+    static function getHolderData()
+    {
+    	$tickers = Stock::getList('1=1','ticker', $order='ticker ASC');
+    	if(!$tickers) return Holder::log('Can not get the Stock data in Sina.class.php getHolderData() function.');
+    	
+    	//查询数据库获取对应URL
+    	$main_holder_url = Setting::getValue('SINA_MAIN_HOLDER_URL');
+    	$liutong_holder_url= Setting::getValue('SINA_LIUTONG_HOLDER_URL');
+    	
+    	foreach ($tickers as $ticker){
+    		$ticker = Stock::tickerToNumber($ticker['ticker']);
+    		$liut_url = str_replace("#ticker#", $ticker, $liutong_holder_url);
+    		$main_url = str_replace("#ticker#", $ticker, $main_holder_url);
+    		if($liut_url) self::getLiutongHolder($ticker, $liut_url);
+    		if($main_url) self::getMainHolder($ticker, $main_url);
+    		sleep(5);
+    		echo "$ticker <br>";
+    	}
+    }
+    
+    static function getLiutongHolder($ticker, $url)
+    {
+    	if(!$url) return false;
+    	$html = file_get_html($url);
+    	if(!$html) return false;
+    	foreach ($html->find("#CirculateShareholderTable") as $table){
+    		$tmp['type'] = 'holder';
+    		$tmp['data'] = $table->plaintext;
+    		TmpData::setData($tmp);
+    		
+    		$datas = self::ltHolderPageCodeFormat($table->plaintext);
+    		foreach ($datas as $date => $data){
+    			foreach ($data as $dt){
+    				$dt['days'] = $date;
+    				$dt['ticker'] = $ticker;
+    				$dt['type'] = 'ltgd';
+    				Holder::setData($dt);
+    			}
+    		}
+    	}
+    }
+    
+    static function getMainHolder($ticker, $url)
+    {
+    	/*
+    	if(!$url) return false;
+    	$html = file_get_html($url);
+    	if(!$html) return false;
+    	$data = array();
+    	foreach ($html->find(".tb-content .item-box") as $k => $items){
+    	
+    	}
+    	return $data;
+    	*/
+    }
+    
+    static function ltHolderPageCodeFormat($str)
+    {
+    	$str = strip_tags($str);
+    	$str = str_replace("&nbsp;", '', $str);
+    	$str = preg_replace('/\s+/', "-||-" ,$str);
+    	$arr = explode('-||-', $str);
+    	$data = array();
+    	$tmp_date = null;
+    	
+    	foreach ($arr as $k => $v){
+    		if(preg_match('/^\d{4}-\d{2}-\d{2}/', $v)){
+    			$tmp_date[] = $k;
+    		}
+    	}
+
+    	foreach ($arr as $k => $v){
+    		foreach ($tmp_date as $dk => $dv){
+    			$dk1 = isset($tmp_date[$dk+1]) ? $tmp_date[$dk+1] : (count($arr)+1);
+    			if($k > $dv && $k <= $dk1){
+    				if($v > 10000){
+    					$data[$arr[$dv]][] = array(
+    						'holder' 	=> $arr[$k-1],
+    						'shares' 	=> $v,
+    						'stake' 	=> $arr[$k+1],
+    						'nature' 	=> $arr[$k+2],
+    					); 
+    				}
+    			}
+    		}
+    	}
+		return $data;
+    }
+    //------------------------------------------- 公共
+    
     
 }
 

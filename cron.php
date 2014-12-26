@@ -10,8 +10,8 @@ foreach (glob(_MODS."/*.php") as $mods){
 	require_once $mods;
 }
 
-Sina::run();
-
+Sina::dataRun();
+Sina::holderRun();
 
 
 

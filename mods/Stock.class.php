@@ -23,6 +23,10 @@ class Stock extends ABase
 		}
 	}
 	
+	static function tickerToNumber($ticker)
+	{
+		return (int)substr($ticker, 2);
+	}
 }
 
 
