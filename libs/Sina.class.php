@@ -30,9 +30,9 @@ class Sina
 	}
 	
 	//获取运行设置数据
-	static function getRunInfo()
+	static function getRunInfo($name)
 	{
-		$runinfo = Setting::getValue('SINA_STOCK_RUN');
+		$runinfo = Setting::getValue($name);
 		if(!$runinfo) return array();
 		$runinfo = json_decode($runinfo, true);
 		return $runinfo;
@@ -42,7 +42,7 @@ class Sina
     static function getStockCount()
     {
     	//先查询数据库是否有今天的设置数据
-    	$runinfo = self::getRunInfo();
+    	$runinfo = self::getRunInfo('SINA_STOCK_RUN');
     	$count = isset($runinfo['SINA_STOCK_COUNT']) ? (int)$runinfo['SINA_STOCK_COUNT'] : 0;
     	$count_date = isset($runinfo['SINA_STOCK_COUNT_DATE']) ? $runinfo['SINA_STOCK_COUNT_DATE'] : null;
     	if($count>0 && $count_date==date('Y-m-d')) return $count;
@@ -92,15 +92,12 @@ class Sina
     	if(!$urls) return false;
 
     	//查询数据库当前运行到哪一页
-    	$runinfo = self::getRunInfo();
+    	$runinfo = self::getRunInfo('SINA_STOCK_RUN');
     	$page = isset($runinfo['SINA_STOCK_RUN_PAGE']) ? (int)$runinfo['SINA_STOCK_RUN_PAGE'] : 0;
     	$page_date = isset($runinfo['SINA_STOCK_RUN_PAGE_DATE']) ? $runinfo['SINA_STOCK_RUN_PAGE_DATE'] : null;
     	if($page_date != date('Y-m-d')) $page = 0;
-    	if($page >= count($urls)) {
-    		exit('Over Page.');
-    		return $page;
-    	}
-    	
+    	if($page >= count($urls)) return $page;
+
     	$encoding = Setting::getValue('SINA_ENCODE');
     	if(!$encoding) $encoding = 'GBK';
     	for($i=$page+1; $i <=count($urls); $i++){
@@ -166,7 +163,7 @@ class Sina
     static function publishDate()
     {
     	$date = (int)date('d');
-    	if (30 == $date || 26 == $date) return true;
+    	if (30 == $date || 31 == $date) return true;
     	return false;
     }
     
@@ -180,13 +177,32 @@ class Sina
     	$liutong_holder_url= Setting::getValue('SINA_LIUTONG_HOLDER_URL');
     	
     	foreach ($tickers as $ticker){
-    		$ticker = Stock::tickerToNumber($ticker['ticker']);
-    		$liut_url = str_replace("#ticker#", $ticker, $liutong_holder_url);
-    		$main_url = str_replace("#ticker#", $ticker, $main_holder_url);
-    		if($liut_url) self::getLiutongHolder($ticker, $liut_url);
-    		if($main_url) self::getMainHolder($ticker, $main_url);
+    		$ticker = $ticker['ticker'];
+    		$tick = Stock::tickerToNumber($ticker);
+    		$liut_url = str_replace("#ticker#", $tick, $liutong_holder_url);
+    		$main_url = str_replace("#ticker#", $tick, $main_holder_url);
+    		if($liut_url){
+    			$runinfo = self::getRunInfo('SINA_LIUTONG_HOLDER_PAGES');
+    			$save_date = isset($runinfo[$ticker]) ? $runinfo[$ticker] : null;
+    			if(!$save_date || $save_date != date('Y-m-d')){
+    				if(self::getLiutongHolder($ticker, $liut_url)){
+    					$runinfo[$ticker] = date('Y-m-d');
+    					Setting::setValue('SINA_LIUTONG_HOLDER_PAGES', json_encode($runinfo));
+    				}
+    			}
+    		}
+    		if($main_url){
+    			$runinfo = self::getRunInfo('SINA_MAIN_HOLDER_PAGES');
+    			$save_date = isset($runinfo[$ticker]) ? $runinfo[$ticker] : null;
+    			if(!$save_date || $save_date != date('Y-m-d')){
+    				if(self::getMainHolder($ticker, $main_url)){
+    					$runinfo[$ticker] = $save_date;
+    					Setting::setValue('SINA_MAIN_HOLDER_PAGES', json_encode($runinfo));
+    				}
+    			}
+    		}
     		sleep(5);
-    		echo "$ticker <br>";
+    		//echo "$ticker <br>";
     	}
     }
     
@@ -206,6 +222,7 @@ class Sina
     			}
     		}
     	}
+    	return true;
     }
     
     static function getMainHolder($ticker, $url)
@@ -220,6 +237,7 @@ class Sina
     	}
     	return $data;
     	*/
+    	return false;
     }
     
     static function ltHolderPageCodeFormat($str)

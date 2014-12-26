@@ -13,7 +13,7 @@ class TmpData extends ABase
 
 	static function setData($data)
 	{
-		DB::Debug();
+		//DB::Debug();
 		$days = date('Y-m-d');
 		$type = isset($data['type']) ? $data['type'] : 0;
 		$info = self::check($days, $type);
