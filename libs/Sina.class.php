@@ -121,7 +121,7 @@ class Sina
     		$runinfo['SINA_STOCK_RUN_PAGE'] = $i;
     		$runinfo['SINA_STOCK_RUN_PAGE_DATE'] = date('Y-m-d');
     		Setting::setValue('SINA_STOCK_RUN', json_encode($runinfo));
-    		sleep(5);
+    		sleep(3);
     	}
     }
 
@@ -162,7 +162,7 @@ class Sina
     static function publishDate()
     {
     	$date = (int)date('d');
-    	if (1 == $date || 27 == $date) return true;
+    	if (1 == $date || 15 == $date) return true;
     	return false;
     }
     
@@ -200,7 +200,7 @@ class Sina
     				}
     			}
     		}
-    		sleep(5);
+    		sleep(3);
     	}
     }
     
