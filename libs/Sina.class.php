@@ -218,6 +218,7 @@ class Sina
     				$dt['type'] = 'ltgd';
     				Holder::setData($dt);
     			}
+    			return true;  //只取最前面一个。
     		}
     	}
     	return true;
@@ -275,6 +276,7 @@ class Sina
     				$dt['type'] = 'zygd';
     				Holder::setData($dt);
     			}
+    			return true;  //只取最前面一个。
     		}
     	}
     	return true;
