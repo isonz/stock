@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50524
 File Encoding         : 65001
 
-Date: 2014-12-26 18:27:45
+Date: 2014-12-27 15:55:18
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -44,7 +44,7 @@ CREATE TABLE `sk_datas` (
   KEY `datas_ticker` (`ticker`),
   KEY `changepercent` (`changepercent`) USING BTREE,
   CONSTRAINT `datas_ticker` FOREIGN KEY (`ticker`) REFERENCES `sk_stock` (`ticker`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3346 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sk_holder
@@ -65,7 +65,7 @@ CREATE TABLE `sk_holder` (
   KEY `stake` (`stake`) USING BTREE,
   KEY `holder` (`holder`) USING BTREE,
   CONSTRAINT `holder_ticker` FOREIGN KEY (`ticker`) REFERENCES `sk_stock` (`ticker`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=691 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sk_setting
@@ -85,7 +85,8 @@ CREATE TABLE `sk_stock` (
   `ticker` char(8) NOT NULL,
   `name` varchar(15) NOT NULL,
   `update_at` date NOT NULL,
-  PRIMARY KEY (`ticker`)
+  PRIMARY KEY (`ticker`),
+  KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -100,4 +101,4 @@ CREATE TABLE `sk_tmp_data` (
   PRIMARY KEY (`id`),
   KEY `days` (`days`),
   KEY `type` (`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;

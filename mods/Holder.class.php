@@ -22,7 +22,7 @@ class Holder extends ABase
 			return self::insert($data);
 		}else{
 			//只保存第一次的结果
-			if('zygd'== $data['type'] && !$pos =  strpos($info['type'], 'zygd')){
+			if('zygd'== $data['type'] && false===stripos($info['type'], 'zygd')){
 				if($info['type']) $data['type'] = $info['type'].','.$data['type'];
 				return self::update(array("ticker" => $ticker, "days" => $days, 'holder' => $holder), $data);
 			}

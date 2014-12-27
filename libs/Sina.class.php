@@ -122,7 +122,6 @@ class Sina
     		$runinfo['SINA_STOCK_RUN_PAGE_DATE'] = date('Y-m-d');
     		Setting::setValue('SINA_STOCK_RUN', json_encode($runinfo));
     		sleep(5);
-    		//echo "$i <br>";
     	}
     }
 
@@ -163,7 +162,7 @@ class Sina
     static function publishDate()
     {
     	$date = (int)date('d');
-    	if (27 == $date || 1 == $date) return true;
+    	if (1 == $date || 27 == $date) return true;
     	return false;
     }
     
@@ -196,13 +195,12 @@ class Sina
     			$save_date = isset($runinfo[$ticker]) ? $runinfo[$ticker] : null;
     			if(!$save_date || $save_date != date('Y-m-d')){
     				if(self::getMainHolder($ticker, $main_url)){
-    					$runinfo[$ticker] = $save_date;
+    					$runinfo[$ticker] = date('Y-m-d');
     					Setting::setValue('SINA_MAIN_HOLDER_PAGES', json_encode($runinfo));
     				}
     			}
     		}
     		sleep(5);
-    		//echo "$ticker <br>";
     	}
     }
     
@@ -224,22 +222,7 @@ class Sina
     	}
     	return true;
     }
-    
-    static function getMainHolder($ticker, $url)
-    {
-    	/*
-    	if(!$url) return false;
-    	$html = file_get_html($url);
-    	if(!$html) return false;
-    	$data = array();
-    	foreach ($html->find(".tb-content .item-box") as $k => $items){
-    	
-    	}
-    	return $data;
-    	*/
-    	return false;
-    }
-    
+
     static function ltHolderPageCodeFormat($str)
     {
     	$str = strip_tags($str);
@@ -276,6 +259,63 @@ class Sina
     		}
     	}
 		return $data;
+    }
+    
+    static function getMainHolder($ticker, $url)
+    {
+    	if(!$url) return false;
+    	$html = file_get_html($url);
+    	if(!$html) return false;
+    	foreach ($html->find("#Table1") as $table){
+    		$datas = self::mainHolderPageCodeFormat($table->plaintext);
+    		foreach ($datas as $date => $data){
+    			foreach ($data as $dt){
+    				$dt['days'] = $date;
+    				$dt['ticker'] = $ticker;
+    				$dt['type'] = 'zygd';
+    				Holder::setData($dt);
+    			}
+    		}
+    	}
+    	return true;
+    }
+    
+    static function mainHolderPageCodeFormat($str)
+    {
+    	$str = strip_tags($str);
+    	$str = str_replace("&nbsp;", '', $str);
+    	$str = preg_replace('/\s+/', "-||-" ,$str);
+    	
+    	$tmp['type'] = 'holder';
+    	$tmp['data'] = $str;
+    	TmpData::setData($tmp);
+    	 
+    	$arr = explode('-||-', $str);
+    	$data = array();
+    	$tmp_date = null;
+    	
+    	foreach ($arr as $k => $v){
+    		if(preg_match('/^\d{4}-\d{2}-\d{2}/', $v)){
+    			$tmp_date[] = $k;
+    		}
+    	}
+    
+    	foreach ($arr as $k => $v){
+    		foreach ($tmp_date as $dk => $dv){
+    			$dk1 = isset($tmp_date[$dk+1]) ? $tmp_date[$dk+1] : (count($arr)+1);
+    			if($k > $dv && $k <= $dk1){
+    				if($v > 1000000){
+    					$data[$arr[$dv]][] = array(
+    							'holder' 	=> $arr[$k-1],
+    							'shares' 	=> $v,
+    							'stake' 	=> $arr[$k+1],
+    							'nature' 	=> $arr[$k+2],
+    					);
+    				}
+    			}
+    		}
+    	}
+    	return $data;
     }
     //------------------------------------------- 公共
     
