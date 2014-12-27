@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50524
 File Encoding         : 65001
 
-Date: 2014-12-27 15:55:18
+Date: 2014-12-27 20:38:46
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -65,7 +65,7 @@ CREATE TABLE `sk_holder` (
   KEY `stake` (`stake`) USING BTREE,
   KEY `holder` (`holder`) USING BTREE,
   CONSTRAINT `holder_ticker` FOREIGN KEY (`ticker`) REFERENCES `sk_stock` (`ticker`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=691 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=133 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for sk_setting
@@ -99,6 +99,5 @@ CREATE TABLE `sk_tmp_data` (
   `type` varchar(10) DEFAULT 'datas' COMMENT '类型',
   `data` longtext COMMENT '数据内容',
   PRIMARY KEY (`id`),
-  KEY `days` (`days`),
-  KEY `type` (`type`)
+  UNIQUE KEY `days_type` (`days`,`type`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;

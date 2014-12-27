@@ -21,9 +21,10 @@ class TmpData extends ABase
 			$data['days'] = $days;
 			return self::insert($data);
 		}else{
+			if(!$data['data']) return false;
 			$table = self::$_table;
 			$dt = "~||~".$data['data'];
-			$sql = "UPDATE $table SET data=concat(data,'$dt') WHERE days='$days' AND type='$type'";
+			$sql = "UPDATE $table SET `data`=concat(`data`,'$dt') WHERE `days`='$days' AND `type`='$type'";
 			return DB::Execute($sql);
 		}
 	}
