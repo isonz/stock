@@ -163,7 +163,7 @@ class Sina
     static function publishDate()
     {
     	$date = (int)date('d');
-    	if (30 == $date || 31 == $date) return true;
+    	if (27 == $date || 1 == $date) return true;
     	return false;
     }
     
