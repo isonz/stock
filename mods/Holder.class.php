@@ -29,6 +29,14 @@ class Holder extends ABase
 		}
 	}
 	
+	static function getHolderInfoByName($holder)
+	{
+		if(!$holder) return false;
+		//DB::Debug();
+		$info = self::getList("holder='$holder'", '*', 'days DESC');
+		return $info;
+	}
+	
 }
 
 

@@ -3,6 +3,7 @@
 <div id="header">
 	<ul id="nav">
 		<li><a href="/">Home</a></li>
+		<li><a href="/holder">Holder</a></li>
 		<li class="li-last"><{$user}> <a href="/sign?out">Sign out</a></li>
 	</ul>
 	<div class="green-line"></div>
