@@ -33,7 +33,7 @@ class Holder extends ABase
 	{
 		if(!$holder) return false;
 		//DB::Debug();
-		$info = self::getList("holder='$holder'", '*', 'days DESC');
+		$info = self::getList("holder LIKE '%$holder%'", '*', 'days DESC');
 		return $info;
 	}
 	
