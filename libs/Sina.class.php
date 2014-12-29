@@ -105,9 +105,7 @@ class Sina
     		$content = Func::curlGet($url);
     		$content = mb_convert_encoding($content, _ENCODING, $encoding);
     		
-    		$tmp['type'] = 'datas';
-    		$tmp['data'] = $content;
-    		TmpData::setData($tmp);
+    		self::tmpData('datas', $content);
     		
     		$content = self::strToJson($content);
     		$content = json_decode($content, true);
@@ -163,7 +161,7 @@ class Sina
     static function publishDate()
     {
     	$date = (int)date('d');
-    	if (1 == $date || 15 == $date) return true;
+    	if (1 == $date || 29 == $date) return true;
     	return false;
     }
     
@@ -232,9 +230,7 @@ class Sina
     	$str = str_replace("&nbsp;", '', $str);
     	$str = preg_replace('/\s+/', "-||-" ,$str);
     	
-    	$tmp['type'] = 'holder';
-    	$tmp['data'] = $str;
-    	TmpData::setData($tmp);
+    	self::tmpData('holder_ltgd', $str);
     	
     	$arr = explode('-||-', $str);
     	$data = array();
@@ -290,9 +286,7 @@ class Sina
     	$str = str_replace("&nbsp;", '', $str);
     	$str = preg_replace('/\s+/', "-||-" ,$str);
     	
-    	$tmp['type'] = 'holder';
-    	$tmp['data'] = $str;
-    	TmpData::setData($tmp);
+    	self::tmpData('holder_zygd', $str);
     	 
     	$arr = explode('-||-', $str);
     	$data = array();
@@ -323,6 +317,9 @@ class Sina
     }
     //------------------------------------------- 公共
     
-    
+    static function tmpData($type, $str)
+    {
+    	error_log("$str \n\t", 3, _LOGS . "stock/".$type."_".date('Y-m-d').'.log');
+    }
 }
 
