@@ -18,6 +18,9 @@ class Holder extends ABase
 		$ticker = isset($data['ticker']) ? $data['ticker'] : 0;
 		$holder = isset($data['holder']) ? $data['holder'] : null;
 		$info = self::check($days, $ticker, $holder);
+		
+		$data['shares'] = str_replace("↑", '', str_replace("↓", '', $data['shares']));
+		$data['stake'] = str_replace("↑", '', str_replace("↓", '', $data['stake']));
 		if(!$info){
 			return self::insert($data);
 		}else{
