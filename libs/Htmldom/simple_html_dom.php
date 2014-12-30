@@ -67,7 +67,7 @@ define('MAX_FILE_SIZE', 6000000);
 // -----------------------------------------------------------------------------
 // get html dom from file
 // $maxlen is defined in the code as PHP_STREAM_COPY_ALL which is defined as -1.
-function file_get_html($url, $use_include_path = false, $context=null, $offset = -1, $maxLen=-1, $lowercase = true, $forceTagsClosed=true, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
+function file_get_html($url, $use_include_path = false, $context=null, $offset = -1, $maxLen=-1, $lowercase = true, $forceTagsClosed=true, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT, $retry=0)
 {
     // We DO force the tags to be terminated.
     $dom = new simple_html_dom(null, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText);
@@ -76,9 +76,11 @@ function file_get_html($url, $use_include_path = false, $context=null, $offset =
 	//$contents = file_get_contents($url, $use_include_path, $context, $offset);
 	$contents = Func::curlChangeIp($url);
 	if(strlen($contents)<1000){
+		$retry++;
+		echo date('Y-m-d H:i:s').": 请求站点受限，正在重试第 $retry 次... \n";
 		$sleep = isset($GLOBALS['SLEEP_TIME']['time']) ? $GLOBALS['SLEEP_TIME']['time'] : 600;
 		sleep($sleep);
-		file_get_html($url, $use_include_path, $context, $offset, $maxLen, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText);
+		file_get_html($url, $use_include_path, $context, $offset, $maxLen, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText,$retry);
 	}
 
     // Paperg - use our own mechanism for getting the contents as we want to control the timeout.
