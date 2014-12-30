@@ -120,8 +120,9 @@ class Sina
     		$runinfo['SINA_STOCK_RUN_PAGE_DATE'] = date('Y-m-d H:i:s');
     		Setting::setValue('SINA_STOCK_RUN', json_encode($runinfo));
     		sleep(10);
-    		echo "data:$url \n";
+    		echo date('Y-m-d H:i:s').": data:$url \n";
     	}
+    	echo date('Y-m-d H:i:s').": All run page number:$i \n";
     }
 
     static function strToJson($str)
@@ -170,6 +171,9 @@ class Sina
     	$tickers = Stock::getList('1=1','ticker', $order='ticker ASC');
     	if(!$tickers) return Holder::log('Can not get the Stock data in Sina.class.php getHolderData() function.');
     	
+    	$liut_run_numb = 0;
+    	$main_run_numb = 0;
+    	
     	//查询数据库获取对应URL
     	$main_holder_url = Setting::getValue('SINA_MAIN_HOLDER_URL');
     	$liutong_holder_url= Setting::getValue('SINA_LIUTONG_HOLDER_URL');
@@ -186,6 +190,7 @@ class Sina
     				if(self::getLiutongHolder($ticker, $liut_url)){
     					$runinfo[$ticker] = date('Y-m-d H:i:s');
     					Setting::setValue('SINA_LIUTONG_HOLDER_PAGES', json_encode($runinfo));
+    					$liut_run_numb++;
     				}
     			}
     		}
@@ -196,12 +201,14 @@ class Sina
     				if(self::getMainHolder($ticker, $main_url)){
     					$runinfo[$ticker] = date('Y-m-d H:i:s');
     					Setting::setValue('SINA_MAIN_HOLDER_PAGES', json_encode($runinfo));
+    					$main_run_numb++;
     				}
     			}
     		}
     		sleep(30);
-    		echo "holder:$ticker \n";
+    		echo date('Y-m-d H:i:s').": holder:$ticker \n";
     	}
+    	echo date('Y-m-d H:i:s').": All run liutong holder:$liut_run_numb , All run main holder:$main_run_numb \n";
     }
     
     static function getLiutongHolder($ticker, $url)

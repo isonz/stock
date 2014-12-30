@@ -75,7 +75,11 @@ function file_get_html($url, $use_include_path = false, $context=null, $offset =
 
 	//$contents = file_get_contents($url, $use_include_path, $context, $offset);
 	$contents = Func::curlChangeIp($url);
-	if(strlen($contents)<1000) exit("请求主体网站受限!稍后再试:$url");
+	if(strlen($contents)<1000){
+		$sleep = isset($GLOBALS['SLEEP_TIME']['time']) ? $GLOBALS['SLEEP_TIME']['time'] : 600;
+		sleep($sleep);
+		file_get_html($url, $use_include_path, $context, $offset, $maxLen, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText);
+	}
 
     // Paperg - use our own mechanism for getting the contents as we want to control the timeout.
     //$contents = retrieve_url_contents($url);
