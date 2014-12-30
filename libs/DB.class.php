@@ -324,7 +324,8 @@ class DB
 
 	static public function GetRequestUri($type = 0)
         {
-                $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ASSET_;
+                //$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ASSET_;
+                $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
                 $uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
                 $script = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
                 $proto = !isset($_SERVER['HTTPS']) ? 'http://' : 'https://';
