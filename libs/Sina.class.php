@@ -109,6 +109,10 @@ class Sina
     		
     		$content = self::strToJson($content);
     		$content = json_decode($content, true);
+    		if(!$content) {
+    			sleep(10);
+    			continue;
+    		}
     		foreach ($content as $data){
     			$ticker = $data['symbol'];
     			unset($data['symbol'], $data['code'], $data['ticktime']);
@@ -233,6 +237,7 @@ class Sina
 
     static function ltHolderPageCodeFormat($str)
     {
+    	if(!$str) return array();
     	$str = strip_tags($str);
     	$str = str_replace("&nbsp;", '', $str);
     	$str = preg_replace('/\s+/', "-||-" ,$str);
@@ -289,6 +294,7 @@ class Sina
     
     static function mainHolderPageCodeFormat($str)
     {
+    	if(!$str) return array();
     	$str = strip_tags($str);
     	$str = str_replace("&nbsp;", '', $str);
     	$str = preg_replace('/\s+/', "-||-" ,$str);
