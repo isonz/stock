@@ -1,6 +1,8 @@
 <?php
 class Sina
 {
+	static private $_retry = 0;
+	
 	//---------------------------------------- 数据
 	//数据入口函数，运行
 	static function dataRun()
@@ -103,8 +105,19 @@ class Sina
     	for($i=$page+1; $i <=count($urls); $i++){
     		$url = $urls[$i];
     		$content = Func::curlGet($url);
-    		$content = mb_convert_encoding($content, _ENCODING, $encoding);
     		
+    		if(!$content || strlen($content) < 20){
+	    		for ($rqn=0; $rqn<100; $rqn++){
+	    			echo date('Y-m-d H:i:s').": Data 请求站点受限，正在重试第  $rqn 次,URL:$url \n";
+	    			$sleep = isset($GLOBALS['SLEEP_TIME']['time']) ? $GLOBALS['SLEEP_TIME']['time'] : 600;
+	    			sleep($sleep);
+	    			$content = Func::curlGet($url);
+	    			if($content && strlen($content) >= 20) break;
+	    		}
+    		}
+    		if(!$content) return false;
+    			
+    		$content = mb_convert_encoding($content, _ENCODING, $encoding);
     		self::tmpData('datas', $content);
     		
     		$content = self::strToJson($content);
@@ -221,7 +234,7 @@ class Sina
     	$html = file_get_html($url);
     	if(!$html) return false;
     	foreach ($html->find("#CirculateShareholderTable") as $table){    		
-    		$datas = self::ltHolderPageCodeFormat($table->plaintext);
+    		$datas = self::ltHolderPageCodeFormat($table->plaintext, $ticker, $url);
     		foreach ($datas as $date => $data){
     			foreach ($data as $dt){
     				$dt['days'] = $date;
@@ -235,18 +248,28 @@ class Sina
     	return true;
     }
 
-    static function ltHolderPageCodeFormat($str)
+    static function ltHolderPageCodeFormat($str, $ticker, $url)
     {
+    	self::tmpData('holder_ltgd_no_fromat', $str);
     	if(!$str) return array();
     	$str = strip_tags($str);
     	$str = str_replace("&nbsp;", '', $str);
     	$str = preg_replace('/\s+/', "-||-" ,$str);
-    	
     	self::tmpData('holder_ltgd', $str);
     	
     	$arr = explode('-||-', $str);
     	$data = array();
     	$tmp_date = null;
+    	
+    	if(!$arr || count($arr) < 2){
+    		if(self::$_retry > 1000) return array();
+    		self::$_retry++;
+    		echo date('Y-m-d H:i:s').": liutong holder 请求站点受限，正在重试第 ". self::$_retry ." 次,URL:$url \n";
+    		$sleep = isset($GLOBALS['SLEEP_TIME']['time']) ? $GLOBALS['SLEEP_TIME']['time'] : 600;
+    		sleep($sleep);
+    		return self::getLiutongHolder($ticker, $url);
+    	}
+    	self::$_retry = 0;
     	
     	foreach ($arr as $k => $v){
     		if(preg_match('/^\d{4}-\d{2}-\d{2}/', $v)){
@@ -278,7 +301,7 @@ class Sina
     	$html = file_get_html($url);
     	if(!$html) return false;
     	foreach ($html->find("#Table1") as $table){
-    		$datas = self::mainHolderPageCodeFormat($table->plaintext);
+    		$datas = self::mainHolderPageCodeFormat($table->plaintext, $ticker, $url);
     		foreach ($datas as $date => $data){
     			foreach ($data as $dt){
     				$dt['days'] = $date;
@@ -292,18 +315,28 @@ class Sina
     	return true;
     }
     
-    static function mainHolderPageCodeFormat($str)
+    static function mainHolderPageCodeFormat($str, $ticker, $url)
     {
+    	self::tmpData('holder_ltgd_no_fromat', $str);
     	if(!$str) return array();
     	$str = strip_tags($str);
     	$str = str_replace("&nbsp;", '', $str);
     	$str = preg_replace('/\s+/', "-||-" ,$str);
-    	
     	self::tmpData('holder_zygd', $str);
     	 
     	$arr = explode('-||-', $str);
     	$data = array();
     	$tmp_date = null;
+    	
+    	if(!$arr || count($arr) < 2){
+    		if(self::$_retry > 1000) return array();
+    		self::$_retry++;
+    		echo date('Y-m-d H:i:s').": main holder 请求站点受限，正在重试第 ". self::$_retry ." 次,URL:$url \n";
+    		$sleep = isset($GLOBALS['SLEEP_TIME']['time']) ? $GLOBALS['SLEEP_TIME']['time'] : 600;
+    		sleep($sleep);
+    		return self::getMainHolder($ticker, $url);
+    	}
+    	self::$_retry = 0;
     	
     	foreach ($arr as $k => $v){
     		if(preg_match('/^\d{4}-\d{2}-\d{2}/', $v)){
@@ -332,7 +365,7 @@ class Sina
     
     static function tmpData($type, $str)
     {
-    	error_log("$str \n\t", 3, _LOGS . "stock/".$type."_".date('Y-m-d').'.log');
+    	error_log(date('Y-m-d H:i:s')."$str \n\t", 3, _LOGS . "stock/".$type."_".date('Y-m-d').'.log');
     }
 }
 

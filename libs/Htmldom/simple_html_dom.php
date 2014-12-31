@@ -77,6 +77,7 @@ function file_get_html($url, $use_include_path = false, $context=null, $offset =
 	$contents = Func::curlChangeIp($url);
 	if(strlen($contents)<1000){
 		$retry++;
+		if($retry > 2000) return false;
 		echo date('Y-m-d H:i:s').": 请求站点受限，正在重试第 $retry 次... \n";
 		$sleep = isset($GLOBALS['SLEEP_TIME']['time']) ? $GLOBALS['SLEEP_TIME']['time'] : 600;
 		sleep($sleep);

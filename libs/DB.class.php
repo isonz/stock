@@ -7,6 +7,7 @@ class DB
 	static private $_lastConnect = null;
 	static private $_config      = array();
 	static public $mDebug	     = false;
+	static private $_retry		= 0;
 
 	static function Instance($config = array()) 
 	{
@@ -39,7 +40,30 @@ class DB
 			$pdb = self::$mConnection = new PDO($dsn, $config['user'], $config['pwd'], $option);
 			$pdb->exec("SET NAMES utf8");
 		} catch(Exception $e ) {
-			throw new Exception('Connect failed: ' . $e->getMessage());
+			//throw new Exception('Connect failed: ' . $e->getMessage());  //ison.zhang
+			self::retryDBConnect($config);
+		}
+	}
+	
+	static function retryDBConnect($config = array())
+	{
+		self::$_config = empty($config) ? self::GetDefaultConfig() : $config;
+		$option = array(
+				PDO::ATTR_EMULATE_PREPARES   => true,
+				//PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
+		);
+		$config = self::$_config;
+		$dsn = "mysql:dbname={$config['dbname']};host={$config['host']};port={$config['port']}";
+		try {
+			$pdb = self::$mConnection = new PDO($dsn, $config['user'], $config['pwd'], $option);
+			$pdb->exec("SET NAMES utf8");
+		} catch(Exception $e ) {
+			self::$_retry++;
+			if(self::$_retry > 1000) throw new Exception('Connect failed: ' . $e->getMessage());
+			self::log("DB can not connect, Retry ". self::$_retry);
+			$sleep = isset($GLOBALS['SLEEP_TIME']['time']) ? $GLOBALS['SLEEP_TIME']['time'] : 600;
+			sleep($sleep);
+			self::retryDBConnect($config);
 		}
 	}
 
@@ -571,5 +595,9 @@ class DB
 		return $arr;
 	}
     
+	static function log($error)
+	{
+		error_log(date('Y-m-d H:i:s').", Error:".$error." \n\t", 3, _LOGS . 'dbc_'.date('Ymd').'.log');
+	}
 
 }

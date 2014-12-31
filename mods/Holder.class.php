@@ -13,6 +13,7 @@ class Holder extends ABase
 
 	static function setData($data)
 	{
+		if(empty($data)) return false;
 		//DB::Debug();
 		$days = isset($data['days']) ? $data['days'] : null;
 		$ticker = isset($data['ticker']) ? $data['ticker'] : 0;
