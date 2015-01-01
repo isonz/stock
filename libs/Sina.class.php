@@ -317,7 +317,7 @@ class Sina
     
     static function mainHolderPageCodeFormat($str, $ticker, $url)
     {
-    	self::tmpData('holder_ltgd_no_fromat', $str);
+    	self::tmpData('holder_zygd_no_fromat', $str);
     	if(!$str) return array();
     	$str = strip_tags($str);
     	$str = str_replace("&nbsp;", '', $str);
