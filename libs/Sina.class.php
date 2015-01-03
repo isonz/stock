@@ -11,6 +11,7 @@ class Sina
 		$count = self::getStockCount();
 		$page_urls = self::getPageUrls($count, 80);
 		self::getStockData($page_urls);
+		self::getMoneyFlowsData();
 	}
 	
 	//获取停止交易日
@@ -361,6 +362,68 @@ class Sina
     	}
     	return $data;
     }
+    
+    //------------------------------------------- 资金流向
+    static function getMoneyFlowsData()
+    {
+    	$tickers = Stock::getList('1=1','ticker', $order='ticker ASC');
+    	if(!$tickers) return Holder::log('Can not get the Stock data in Sina.class.php getMoneyFlowsData() function.');
+    	 
+    	$run_numb = 0;
+    	 
+    	//查询数据库获取对应URL
+    	$main_holder_url = Setting::getValue('SINA_MAIN_HOLDER_URL');
+    	
+    	/*
+    	//<script>location.href='http://sina.com.cn'; </script>
+    	var moneyFlowData=(({
+    	r0_in:"70225564.5400" - r0_out:"4351200.0000" = 特大单 净流入（万元）
+    	r0:"117625611.4200",
+    	r1_in:"16428289.4800" - r1_out:"866965.0000" = 大单 净流入（万元）
+    	r1:"17295254.4800",
+    	r2_in:"13038584.3200" - r2_out:"0.0000" = 小单 净流入（万元）
+    	r2:"13038584.3200",
+    	r3_in:"10045740.8000" - r3_out:"0.0000" = 散单  净流入（万元）
+    	r3:"10045740.8000",
+    	curr_capital:"95039",name:"赤天化",trade:"6.0800",changeratio:"0.0994575",volume:"26400516.0000",turnover:"277.785",r0x_ratio:"76.589",opendate:"2014-12-31",ticktime:"15:00:00",netamount:"104520014.1400"}))
+    	*/
+    	
+    	/*
+    	foreach ($tickers as $ticker){
+    		$ticker = $ticker['ticker'];
+    		$tick = Stock::tickerToNumber($ticker);
+    		$liut_url = str_replace("#ticker#", $tick, $liutong_holder_url);
+    		$main_url = str_replace("#ticker#", $tick, $main_holder_url);
+    		if($liut_url){
+    			$runinfo = self::getRunInfo('SINA_LIUTONG_HOLDER_PAGES');
+    			$save_date = isset($runinfo[$ticker]) ? $runinfo[$ticker] : null;
+    			if(!$save_date || $save_date != date('Y-m-d H:i:s')){
+    				if(self::getLiutongHolder($ticker, $liut_url)){
+    					$runinfo[$ticker] = date('Y-m-d H:i:s');
+    					Setting::setValue('SINA_LIUTONG_HOLDER_PAGES', json_encode($runinfo));
+    					$liut_run_numb++;
+    				}
+    			}
+    		}
+    		if($main_url){
+    			$runinfo = self::getRunInfo('SINA_MAIN_HOLDER_PAGES');
+    			$save_date = isset($runinfo[$ticker]) ? $runinfo[$ticker] : null;
+    			if(!$save_date || $save_date != date('Y-m-d H:i:s')){
+    				if(self::getMainHolder($ticker, $main_url)){
+    					$runinfo[$ticker] = date('Y-m-d H:i:s');
+    					Setting::setValue('SINA_MAIN_HOLDER_PAGES', json_encode($runinfo));
+    					$main_run_numb++;
+    				}
+    			}
+    		}
+    		sleep(30);
+    		echo date('Y-m-d H:i:s').": holder:$ticker \n";
+    	}
+    	echo date('Y-m-d H:i:s').": All run liutong holder:$liut_run_numb , All run main holder:$main_run_numb \n";
+    	*/
+    	
+    }    
+    
     //------------------------------------------- 公共
     
     static function tmpData($type, $str)
