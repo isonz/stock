@@ -11,7 +11,7 @@ class Sina
 		$count = self::getStockCount();
 		$page_urls = self::getPageUrls($count, 80);
 		self::getStockData($page_urls);
-		self::getMoneyFlowsData();
+		self::getMoneyFlows();
 	}
 	
 	//获取停止交易日
@@ -98,7 +98,7 @@ class Sina
     	$runinfo = self::getRunInfo('SINA_STOCK_RUN');
     	$page = isset($runinfo['SINA_STOCK_RUN_PAGE']) ? (int)$runinfo['SINA_STOCK_RUN_PAGE'] : 0;
     	$page_date = isset($runinfo['SINA_STOCK_RUN_PAGE_DATE']) ? $runinfo['SINA_STOCK_RUN_PAGE_DATE'] : null;
-    	if($page_date != date('Y-m-d H:i:s')) $page = 0;
+    	if($page_date != date('Y-m-d')) $page = 0;
     	if($page >= count($urls)) return $page;
 
     	$encoding = Setting::getValue('SINA_ENCODE');
@@ -135,7 +135,7 @@ class Sina
     		
     		//把当前运行的页码存入设置数据表
     		$runinfo['SINA_STOCK_RUN_PAGE'] = $i;
-    		$runinfo['SINA_STOCK_RUN_PAGE_DATE'] = date('Y-m-d H:i:s');
+    		$runinfo['SINA_STOCK_RUN_PAGE_DATE'] = date('Y-m-d');
     		Setting::setValue('SINA_STOCK_RUN', json_encode($runinfo));
     		sleep(10);
     		echo date('Y-m-d H:i:s').": data:$url \n";
@@ -204,9 +204,9 @@ class Sina
     		if($liut_url){
     			$runinfo = self::getRunInfo('SINA_LIUTONG_HOLDER_PAGES');
     			$save_date = isset($runinfo[$ticker]) ? $runinfo[$ticker] : null;
-    			if(!$save_date || $save_date != date('Y-m-d H:i:s')){
+    			if(!$save_date || $save_date != date('Y-m-d')){
     				if(self::getLiutongHolder($ticker, $liut_url)){
-    					$runinfo[$ticker] = date('Y-m-d H:i:s');
+    					$runinfo[$ticker] = date('Y-m-d');
     					Setting::setValue('SINA_LIUTONG_HOLDER_PAGES', json_encode($runinfo));
     					$liut_run_numb++;
     				}
@@ -215,9 +215,9 @@ class Sina
     		if($main_url){
     			$runinfo = self::getRunInfo('SINA_MAIN_HOLDER_PAGES');
     			$save_date = isset($runinfo[$ticker]) ? $runinfo[$ticker] : null;
-    			if(!$save_date || $save_date != date('Y-m-d H:i:s')){
+    			if(!$save_date || $save_date != date('Y-m-d')){
     				if(self::getMainHolder($ticker, $main_url)){
-    					$runinfo[$ticker] = date('Y-m-d H:i:s');
+    					$runinfo[$ticker] = date('Y-m-d');
     					Setting::setValue('SINA_MAIN_HOLDER_PAGES', json_encode($runinfo));
     					$main_run_numb++;
     				}
@@ -351,10 +351,10 @@ class Sina
     			if($k > $dv && $k <= $dk1){
     				if($v > 1000000){
     					$data[$arr[$dv]][] = array(
-    							'holder' 	=> $arr[$k-1],
-    							'shares' 	=> $v,
-    							'stake' 	=> $arr[$k+1],
-    							'nature' 	=> $arr[$k+2],
+    						'holder' 	=> $arr[$k-1],
+    						'shares' 	=> $v,
+    						'stake' 	=> $arr[$k+1],
+    						'nature' 	=> $arr[$k+2],
     					);
     				}
     			}
@@ -364,71 +364,71 @@ class Sina
     }
     
     //------------------------------------------- 资金流向
-    static function getMoneyFlowsData()
+    static function getMoneyFlows()
     {
     	$tickers = Stock::getList('1=1','ticker', $order='ticker ASC');
     	if(!$tickers) return Holder::log('Can not get the Stock data in Sina.class.php getMoneyFlowsData() function.');
     	 
     	$run_numb = 0;
-    	 
-    	//查询数据库获取对应URL
-    	$main_holder_url = Setting::getValue('SINA_MAIN_HOLDER_URL');
-    	
-    	/*
-    	//<script>location.href='http://sina.com.cn'; </script>
-    	var moneyFlowData=(({
-    	r0_in:"70225564.5400" - r0_out:"4351200.0000" = 特大单 净流入（万元）
-    	r0:"117625611.4200",
-    	r1_in:"16428289.4800" - r1_out:"866965.0000" = 大单 净流入（万元）
-    	r1:"17295254.4800",
-    	r2_in:"13038584.3200" - r2_out:"0.0000" = 小单 净流入（万元）
-    	r2:"13038584.3200",
-    	r3_in:"10045740.8000" - r3_out:"0.0000" = 散单  净流入（万元）
-    	r3:"10045740.8000",
-    	curr_capital:"95039",name:"赤天化",trade:"6.0800",changeratio:"0.0994575",volume:"26400516.0000",turnover:"277.785",r0x_ratio:"76.589",opendate:"2014-12-31",ticktime:"15:00:00",netamount:"104520014.1400"}))
-    	*/
-    	
-    	/*
+    	$money_flow_url = Setting::getValue('SINA_MONEY_FLOWS_URL');    	
     	foreach ($tickers as $ticker){
     		$ticker = $ticker['ticker'];
-    		$tick = Stock::tickerToNumber($ticker);
-    		$liut_url = str_replace("#ticker#", $tick, $liutong_holder_url);
-    		$main_url = str_replace("#ticker#", $tick, $main_holder_url);
-    		if($liut_url){
-    			$runinfo = self::getRunInfo('SINA_LIUTONG_HOLDER_PAGES');
+    		$url = str_replace("#ticker#", $ticker, $money_flow_url);
+    		self::tmpData('money_flow', $url);
+    		if($url){
+    			$runinfo = self::getRunInfo('SINA_MONEY_FLOWS_DATA');
     			$save_date = isset($runinfo[$ticker]) ? $runinfo[$ticker] : null;
-    			if(!$save_date || $save_date != date('Y-m-d H:i:s')){
-    				if(self::getLiutongHolder($ticker, $liut_url)){
-    					$runinfo[$ticker] = date('Y-m-d H:i:s');
-    					Setting::setValue('SINA_LIUTONG_HOLDER_PAGES', json_encode($runinfo));
-    					$liut_run_numb++;
-    				}
-    			}
-    		}
-    		if($main_url){
-    			$runinfo = self::getRunInfo('SINA_MAIN_HOLDER_PAGES');
-    			$save_date = isset($runinfo[$ticker]) ? $runinfo[$ticker] : null;
-    			if(!$save_date || $save_date != date('Y-m-d H:i:s')){
-    				if(self::getMainHolder($ticker, $main_url)){
-    					$runinfo[$ticker] = date('Y-m-d H:i:s');
-    					Setting::setValue('SINA_MAIN_HOLDER_PAGES', json_encode($runinfo));
-    					$main_run_numb++;
+    			if(!$save_date || $save_date != date('Y-m-d')){
+    				if(self::getMoneyFlowsData($ticker, $url)){
+    					$runinfo[$ticker] = date('Y-m-d');
+    					Setting::setValue('SINA_MONEY_FLOWS_DATA', json_encode($runinfo));
+    					$run_numb++;
     				}
     			}
     		}
     		sleep(30);
     		echo date('Y-m-d H:i:s').": holder:$ticker \n";
     	}
-    	echo date('Y-m-d H:i:s').": All run liutong holder:$liut_run_numb , All run main holder:$main_run_numb \n";
-    	*/
-    	
+    	echo date('Y-m-d H:i:s').": All run money flows: $run_numb \n";
     }    
+    
+    static function getMoneyFlowsData($ticker, $url)
+    {
+    	$encoding = Setting::getValue('SINA_ENCODE');
+    	if(!$encoding) $encoding = 'GBK';
+    	$content = Func::curlGet($url);
+    	self::tmpData('money_flow', $content);
+    	$content = strip_tags(mb_convert_encoding($content, _ENCODING, $encoding));
+    	$content = strstr($content, "(({");
+    	$content = self::moneyFlowStrToJson($content);
+    	$content = str_replace("}))", '}', str_replace("(({", '{', $content));
+    	$content = json_decode($content, true);
+    	return MFlow::setData($ticker, $content);
+    }
+    
+    static function moneyFlowStrToJson($str)
+    {
+    	$json = '';
+    	for($i=0; $i<strlen($str); $i++){
+    		$strh = isset($str[$i-1]) ? $str[$i-1] : null;
+    		$stri = $str[$i];
+    		$strj = isset($str[$i+1]) ? $str[$i+1] : null;
+    		if('{'==$stri || (','==$stri && '{'!=$strj)){
+    			$json .= $stri.'"';
+    		}else if(':' == $stri && (!is_numeric($strh) || '"' == $strj)){
+    			$json .= '"'.$stri;
+    		}else{
+    			$json .= $stri;
+    		}
+    	}
+    	return $json;
+    }
     
     //------------------------------------------- 公共
     
     static function tmpData($type, $str)
     {
-    	error_log(date('Y-m-d H:i:s')."$str \n\t", 3, _LOGS . "stock/".$type."_".date('Y-m-d').'.log');
+    	error_log(date('Y-m-d H:i:s')." : $str \n\t", 3, _LOGS . "stock/".$type."_".date('Y-m-d').'.log');
     }
 }
 

@@ -12,6 +12,7 @@ foreach (glob(_MODS."/*.php") as $mods){
 
 Sina::dataRun();
 Sina::holderRun();
+Sina::getMoneyFlows();
 
 
 

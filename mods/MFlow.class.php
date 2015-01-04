@@ -41,7 +41,7 @@ class MFlow extends ABase
 		$data['ticker']	= $ticker;
 		$data['data'] = json_encode($data);
 
-		$info = self::getStock($days, $ticker);
+		$info = self::getData($days, $ticker);
 		if(!$info){
 			return self::insert($data);
 		}else{
