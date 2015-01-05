@@ -55,6 +55,8 @@ class Sina
     	$encoding = Setting::getValue('SINA_ENCODE');
     	if(!$encoding) $encoding = 'GBK';
 		$content = Func::curlGet($url);
+		$content = self::retryUrkGet($content, $url, 5, 100);
+		if(!$content) return false;
 		$content = mb_convert_encoding($content, _ENCODING, $encoding);
 		$content = Func::strFindNum($content);
 		
@@ -106,16 +108,7 @@ class Sina
     	for($i=$page+1; $i <=count($urls); $i++){
     		$url = $urls[$i];
     		$content = Func::curlGet($url);
-    		
-    		if(!$content || strlen($content) < 20){
-	    		for ($rqn=0; $rqn<100; $rqn++){
-	    			echo date('Y-m-d H:i:s').": Data 请求站点受限，正在重试第  $rqn 次,URL:$url \n";
-	    			$sleep = isset($GLOBALS['SLEEP_TIME']['time']) ? $GLOBALS['SLEEP_TIME']['time'] : 600;
-	    			sleep($sleep);
-	    			$content = Func::curlGet($url);
-	    			if($content && strlen($content) >= 20) break;
-	    		}
-    		}
+    		$content = self::retryUrkGet($content, $url, 20, 100);
     		if(!$content) return false;
     			
     		$content = mb_convert_encoding($content, _ENCODING, $encoding);
@@ -397,6 +390,9 @@ class Sina
     	$encoding = Setting::getValue('SINA_ENCODE');
     	if(!$encoding) $encoding = 'GBK';
     	$content = Func::curlGet($url);
+    	$content = self::retryUrkGet($content, $url, 20, 100);
+    	if(!$content) return false;
+    	    	
     	self::tmpData('money_flow', $content);
     	$content = strip_tags(mb_convert_encoding($content, _ENCODING, $encoding));
     	$content = strstr($content, "(({");
@@ -425,6 +421,19 @@ class Sina
     }
     
     //------------------------------------------- 公共
+    static function retryUrkGet($content, $url, $pagesize=20, $retry=100)
+    {
+    	if(!$content || strlen($content) < $pagesize){
+    		for ($i=0; $i<$retry; $i++){
+    			echo date('Y-m-d H:i:s').": Data 请求站点受限，正在重试第  $i 次,URL:$url \n";
+    			$sleep = isset($GLOBALS['SLEEP_TIME']['time']) ? $GLOBALS['SLEEP_TIME']['time'] : 600;
+    			sleep($sleep);
+    			$content = Func::curlGet($url);
+    			if($content && strlen($content) >= $pagesize) break;
+    		}
+    	}
+    	return $content;
+    }
     
     static function tmpData($type, $str)
     {
