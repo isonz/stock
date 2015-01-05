@@ -48,7 +48,7 @@ class Sina
     	$runinfo = self::getRunInfo('SINA_STOCK_RUN');
     	$count = isset($runinfo['SINA_STOCK_COUNT']) ? (int)$runinfo['SINA_STOCK_COUNT'] : 0;
     	$count_date = isset($runinfo['SINA_STOCK_COUNT_DATE']) ? $runinfo['SINA_STOCK_COUNT_DATE'] : null;
-    	if($count>0 && $count_date==date('Y-m-d H:i:s')) return $count;
+    	if($count>0 && $count_date==date('Y-m-d')) return $count;
     	
     	//没有今天的设置数据再请求网站上的
     	$url = Setting::getValue('SINA_STOCK_COUNT_URL');
@@ -57,12 +57,13 @@ class Sina
 		$content = Func::curlGet($url);
 		$content = self::retryUrkGet($content, $url, 5, 100);
 		if(!$content) return false;
+		self::tmpData('stock_count', $content);
 		$content = mb_convert_encoding($content, _ENCODING, $encoding);
 		$content = Func::strFindNum($content);
 		
 		//把网站上的数据存入设置数据表
 		$runinfo['SINA_STOCK_COUNT'] = $content;
-		$runinfo['SINA_STOCK_COUNT_DATE'] = date('Y-m-d H:i:s');
+		$runinfo['SINA_STOCK_COUNT_DATE'] = date('Y-m-d');
 		Setting::setValue('SINA_STOCK_RUN', json_encode($runinfo));
 		
 		return $content;
