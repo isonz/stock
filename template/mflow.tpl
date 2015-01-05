@@ -18,15 +18,15 @@
   <tr align="center">
     <td bgcolor="#FFFFFF" style="padding:10px;">
     	流通盘：<{sprintf("%.4f",$cvs/10000)}> 万元 ，
-    	换手数：<{sprintf("%.4f",$total/10000)}> 万元 ，
+    	成交额：<{sprintf("%.4f",$total/10000)}> 万元 ，
     	当前资本：<{if isset($data.curr_capital)}><{sprintf("%.2f",$data.curr_capital)}><{/if}> 万，
     	当前价格：<{if isset($data.trade)}><{sprintf("%.2f",$data.trade)}><{/if}> ，
     	<br><br>
     	净额：<{if isset($data.netamount)}><{sprintf("%.2f",$data.netamount/10000)}>万<{/if}> ，
     	环比：<{if isset($data.r0x_ratio)}><{sprintf("%.2f",$data.r0x_ratio)}>%<{/if}> ，
     	换手率：<{if isset($data.turnover)}><{sprintf("%.2f",$data.turnover)/100}>%<{/if}> ，
-    	成交量：<{if isset($data.volume)}><{sprintf("%.2f",$data.volume/10000)}>万<{/if}> ，
-    	涨跌：<{if isset($data.changeratio)}><{sprintf("%.4f",$data.changeratio)*10}>%<{/if}>
+    	成交量：<{if isset($data.volume)}><{sprintf("%.2f",$data.volume/1000000)}>万手<{/if}> ，
+    	涨跌：<{if isset($data.changeratio)}><{sprintf("%.4f",$data.changeratio)*100}>%<{/if}>
     </td>
   </tr>
 </table>
