@@ -56,9 +56,9 @@
       <tr align="center">
         <td width="20%" height="30" bgcolor="#FFFFFF">&nbsp;</td>
         <td width="20%" bgcolor="#FFFFFF">散单</td>
-        <td width="20%" bgcolor="#FFFFFF">小单</td>
-        <td width="20%" bgcolor="#FFFFFF">大单</td>
-        <td bgcolor="#FFFFFF">特大单</td>
+        <td width="20%" bgcolor="#FFFFFF">小单 <{if isset($data.trade)}>(±<{$data.trade * 2}>万)<{/if}></td>
+        <td width="20%" bgcolor="#FFFFFF">大单 <{if isset($data.trade)}>(±<{$data.trade * 10}>万)<{/if}></td>
+        <td bgcolor="#FFFFFF">特大单 <{if isset($data.trade)}>(±<{$data.trade * 50}>万)<{/if}></td>
       </tr>
       <tr align="center">
         <td height="30" bgcolor="#FFFFFF">净流入（万元）</td>
