@@ -39,11 +39,13 @@ class Datas extends ABase
 		if(!$day_num) $day_num = 10;
 		//DB::Debug();
 		$table = self::$_table;
-		$sql = "SELECT a.* FROM 
+		$stock_table = Stock::$_table;
+		$sql = "SELECT a.*, c.name AS sname FROM 
 				(SELECT id,days,ticker,trade,pricechange,changepercent FROM $table WHERE changepercent>=8 AND ($from_date-days)<(3600*24*$day_num)) AS a, 
-				(SELECT id,days,ticker FROM $table WHERE changepercent>=8 AND ($from_date-days)<(3600*24*$day_num)) AS b
-				WHERE
-				a.ticker = b.ticker 
+				(SELECT id,days,ticker FROM $table WHERE changepercent>=8 AND ($from_date-days)<(3600*24*$day_num)) AS b,
+				$stock_table AS c
+				WHERE 
+				c.ticker = a.ticker AND	a.ticker = b.ticker 
 				ORDER BY a.ticker ASC, a.days DESC";
 		$stmt = DB::Execute($sql);
 		$datas = $stmt->fetchAll();
