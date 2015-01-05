@@ -431,7 +431,7 @@ class Sina
     {
     	if(!$content || strlen($content) < $pagesize){
     		for ($i=1; $i<=$retry; $i++){
-    			echo date('Y-m-d H:i:s').": Data 请求站点受限，正在重试第  $i 次,URL:$url \n";
+    			echo date('Y-m-d H:i:s').": 请求站点受限，正在重试第  $i 次,URL:$url \n";
     			$sleep = isset($GLOBALS['SLEEP_TIME']['time']) ? $GLOBALS['SLEEP_TIME']['time'] : 600;
     			sleep($sleep);
     			$content = Func::curlGet($url);
