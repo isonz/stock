@@ -191,6 +191,7 @@ class Sina
     	$liutong_holder_url= Setting::getValue('SINA_LIUTONG_HOLDER_URL');
     	
     	foreach ($tickers as $ticker){
+    		$is_sleep = 0;
     		$ticker = $ticker['ticker'];
     		$tick = Stock::tickerToNumber($ticker);
     		$liut_url = str_replace("#ticker#", $tick, $liutong_holder_url);
@@ -203,6 +204,7 @@ class Sina
     					$runinfo[$ticker] = date('Y-m-d');
     					Setting::setValue('SINA_LIUTONG_HOLDER_PAGES', json_encode($runinfo));
     					$liut_run_numb++;
+    					$is_sleep++;
     				}
     			}
     		}
@@ -214,10 +216,11 @@ class Sina
     					$runinfo[$ticker] = date('Y-m-d');
     					Setting::setValue('SINA_MAIN_HOLDER_PAGES', json_encode($runinfo));
     					$main_run_numb++;
+    					$is_sleep++;
     				}
     			}
     		}
-    		sleep(30);
+    		if($is_sleep) sleep(30);
     		echo date('Y-m-d H:i:s').": holder:$ticker \n";
     	}
     	echo date('Y-m-d H:i:s').": All run liutong holder:$liut_run_numb , All run main holder:$main_run_numb \n";
@@ -366,6 +369,7 @@ class Sina
     	$run_numb = 0;
     	$money_flow_url = Setting::getValue('SINA_MONEY_FLOWS_URL');    	
     	foreach ($tickers as $ticker){
+    		$is_sleep = 0;
     		$ticker = $ticker['ticker'];
     		$url = str_replace("#ticker#", $ticker, $money_flow_url);
     		self::tmpData('money_flow', $url);
@@ -377,10 +381,11 @@ class Sina
     					$runinfo[$ticker] = date('Y-m-d');
     					Setting::setValue('SINA_MONEY_FLOWS_DATA', json_encode($runinfo));
     					$run_numb++;
+    					$is_sleep++;
     				}
     			}
     		}
-    		sleep(30);
+    		if($is_sleep) sleep(30);
     		echo date('Y-m-d H:i:s').": holder:$ticker \n";
     	}
     	echo date('Y-m-d H:i:s').": All run money flows: $run_numb \n";
