@@ -386,9 +386,9 @@ class Sina
     			}
     		}
     		if($is_sleep) sleep(30);
-    		echo date('Y-m-d H:i:s').": holder:$ticker \n";
+    		echo date('Y-m-d H:i:s').": MFlows :$ticker \n";
     	}
-    	echo date('Y-m-d H:i:s').": All run money flows: $run_numb \n";
+    	echo date('Y-m-d H:i:s').": All run MFlows: $run_numb \n";
     }    
     
     static function getMoneyFlowsData($ticker, $url)
