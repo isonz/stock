@@ -36,7 +36,7 @@
   <tr>
     <td align="center"><table width="98%" border="0" cellspacing="1" cellpadding="0" bgcolor="#DCE5F4">
       <tr>
-        <td height="30" colspan="5" align="center"><a href="http://vip.stock.finance.sina.com.cn/moneyflow/#!ssfx!sh600702" target="_blank">主力、散户资金流向</a></td>
+        <td height="30" colspan="5" align="center"><a href="http://vip.stock.finance.sina.com.cn/moneyflow/#!ssfx!<{$ticker}>" target="_blank">主力、散户资金流向</a></td>
       </tr>
       <tr align="center">
         <td height="30" bgcolor="#FFFFFF">&nbsp;</td>
@@ -68,7 +68,7 @@
   <tr>
     <td align="center"><table width="98%" border="0" cellspacing="1" cellpadding="0" bgcolor="#DCE5F4">
       <tr>
-        <td height="30" colspan="5" align="center"><a href="http://vip.stock.finance.sina.com.cn/moneyflow/#!ssfx!sh600702" target="_blank">分类资金净流入额</a></td>
+        <td height="30" colspan="5" align="center"><a href="http://vip.stock.finance.sina.com.cn/moneyflow/#!ssfx!<{$ticker}>" target="_blank">分类资金净流入额</a></td>
       </tr>
       <tr align="center">
         <td width="20%" height="30" bgcolor="#FFFFFF">&nbsp;</td>
