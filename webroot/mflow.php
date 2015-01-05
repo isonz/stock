@@ -11,6 +11,8 @@ if($ticker && $days){
 	$cates = MFlow::getCategoryFlows($days, $ticker);
 }
 
+Templates::Assign('cvs', MFlow::$cvs);
+Templates::Assign('total', MFlow::$total);
 Templates::Assign('days', $days);
 Templates::Assign('ticker', $ticker);
 Templates::Assign('data', $data);
