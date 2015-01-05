@@ -80,19 +80,19 @@ class MFlow extends ABase
 	{
 		self::initInfoData($days, $ticker);
 		$mainIn 	= self::$r0_in + self::$r1_in;
-		$mainInP 	= $mainIn / self::$total;
+		$mainInP 	= self::$total ? $mainIn / self::$total : 0;
 		$mainOut 	= self::$r0_out + self::$r1_out;
-		$mainOutP 	= $mainOut / self::$total;
+		$mainOutP 	= self::$total ? $mainOut / self::$total : 0;
 		$retailIn 	= self::$r3_in + self::$r2_in;
-		$retailInP 	= $retailIn / self::$total;
+		$retailInP 	= self::$total ? $retailIn / self::$total : 0;
 		$retailOut	= self::$r3_out + self::$r2_out;
-		$retailOutP = $retailOut / self::$total;
+		$retailOutP = self::$total ? $retailOut / self::$total : 0;
 		
 		$folws = array(
-			'mainin'	=> array($mainIn, $mainInP),
-			'mainout'	=> array($mainOut, $mainOutP),
-			'retailin'	=> array($retailIn, $retailInP),
-			'retailout'	=> array($retailOut, $retailOutP),
+			'mainin'	=> array('i'=>$mainIn/10000, 'p'=>sprintf("%.5f",$mainInP)),
+			'mainout'	=> array('i'=>$mainOut/10000, 'p'=>sprintf("%.5f",$mainOutP)),
+			'retailin'	=> array('i'=>$retailIn/10000, 'p'=>sprintf("%.5f",$retailInP)),
+			'retailout'	=> array('i'=>$retailOut/10000, 'p'=>sprintf("%.5f",$retailOutP)),
 		);
 		return $folws;
 	}
@@ -107,21 +107,21 @@ class MFlow extends ABase
 		$r1_r_in = self::$r1_in - self::$r1_out;
 		$r0_r_in = self::$r0_in - self::$r0_out;
 
-		$r3_p_svs = self::$r3 / self::$cvs;
-		$r2_p_svs = self::$r2 / self::$cvs;
-		$r1_p_svs = self::$r1 / self::$cvs;
-		$r0_p_svs = self::$r0 / self::$cvs;
+		$r3_p_svs = self::$cvs ? self::$r3 / self::$cvs : 0;
+		$r2_p_svs = self::$cvs ? self::$r2 / self::$cvs : 0;
+		$r1_p_svs = self::$cvs ? self::$r1 / self::$cvs : 0;
+		$r0_p_svs = self::$cvs ? self::$r0 / self::$cvs : 0;
 		
-		$r3_p_turnover = self::$r3 / self::$total;
-		$r2_p_turnover = self::$r2 / self::$total;
-		$r1_p_turnover = self::$r1 / self::$total;
-		$r0_p_turnover = self::$r0 / self::$total;
+		$r3_p_turnover = self::$total ? self::$r3 / self::$total : 0;
+		$r2_p_turnover = self::$total ? self::$r2 / self::$total : 0;
+		$r1_p_turnover = self::$total ? self::$r1 / self::$total : 0;
+		$r0_p_turnover = self::$total ? self::$r0 / self::$total : 0;
 		
 		$flows = array(
-			'r3'	=> array($r3_r_in, $r3_p_svs, $r3_p_turnover),
-			'r2'	=> array($r2_r_in, $r2_p_svs, $r2_p_turnover),
-			'r1'	=> array($r1_r_in, $r1_p_svs, $r1_p_turnover),
-			'r0'	=> array($r0_r_in, $r0_p_svs, $r0_p_turnover),
+			'r3'	=> array('i'=>$r3_r_in/10000, 'p'=>sprintf("%.5f",$r3_p_svs), 't'=>sprintf("%.5f",$r3_p_turnover)),
+			'r2'	=> array('i'=>$r2_r_in/10000, 'p'=>sprintf("%.5f",$r2_p_svs), 't'=>sprintf("%.5f",$r2_p_turnover)),
+			'r1'	=> array('i'=>$r1_r_in/10000, 'p'=>sprintf("%.5f",$r1_p_svs), 't'=>sprintf("%.5f",$r1_p_turnover)),
+			'r0'	=> array('i'=>$r0_r_in/10000, 'p'=>sprintf("%.5f",$r0_p_svs), 't'=>sprintf("%.5f",$r0_p_turnover)),
 		);
 		return $flows;
 	}
