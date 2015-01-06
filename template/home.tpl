@@ -19,7 +19,7 @@
           <tr bgcolor="#FFFFFF" align="center">
           	<td><{$dt.id}></td>
 		    <td><{$dt.days}></td>
-		    <td><{$dt.numb}></td>
+		    <td><a href="stock?ticker=<{$dt.ticker}>" target="_blank"><{$dt.numb}></a></td>
 		    <td><a href="http://finance.sina.com.cn/realstock/company/<{$dt.ticker}>/nc.shtml" target="_blank" style="color:#fff"><{$dt.sname}></a></td>
 		    <td><a href="http://finance.sina.com.cn/realstock/company/<{$dt.ticker}>/nc.shtml" target="_blank"><{$dt.ticker}></a></td>
 		    <td><a href="mflow?ticker=<{$dt.ticker}>&days=<{$dt.days}>" target="_blank"><{$dt.changepercent}></a></td>
