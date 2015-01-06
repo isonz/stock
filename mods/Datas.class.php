@@ -65,11 +65,57 @@ class Datas extends ABase
 			$rs[$k.'_'.$i] = $dti;
 		}
 		unset($data,$dti,$dtj);
-		
 		krsort($rs);
+		
+		//-------------------- 检查数量为1的上一次是否停牌，如果不是除去
+		foreach ($rs as $k => $r){
+			if(2 > $r['numb']) {
+				$pdd = self::getPreDaysData($r['ticker'],$day_num);
+				$pre = isset($pdd[1]) ? $pdd[1] : null;
+				if($pre){
+					if($pre['trade'] > 0) unset($rs[$k]);
+				}
+			}
+		}
+		//-------------------
 		//print_r($rs);
 		return $rs;
 	}
+	
+	static function getPreDaysData($ticker, $day_num=10, $from_date=0)
+	{
+		if(!$from_date) $from_date = strtotime(date('Y-m-d'));
+		if(!$day_num) $day_num = 10;
+		
+		//DB::Debug();
+		$table = self::$_table;
+		$sql = "SELECT id, FROM_UNIXTIME(days, '%Y-%m-%d') AS date, ticker, trade FROM $table 
+				WHERE ticker='$ticker' AND ($from_date-days)<(3600*24*$day_num)
+				ORDER BY days DESC";
+		$stmt = DB::Execute($sql);
+		$datas = $stmt->fetchAll();
+		return $datas;
+	}
+	
+	static function getOneData($ticker, $from, $to)
+	{
+		if(!$ticker) return false;
+		$to = strtotime($to);
+		$from = strtotime($from);
+		if($from > $to) return false;
+		
+		$stock = Stock::getStock($ticker);
+		//DB::Debug();
+		$options['select'] = "*, FROM_UNIXTIME(days, '%Y-%m-%d') AS date";
+		$options['order'] = "ORDER BY days DESC";
+		$options['condition'] = "ticker='$ticker' AND days>=$from AND days<=$to";
+		$info = DB::LimitQuery(self::$_table, $options);
+		foreach ($info as $k => $in){
+			$info[$k]['sname'] = $stock["name"];
+		}
+		return $info;
+	}
+	
 }
 
 
