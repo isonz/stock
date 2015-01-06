@@ -14,7 +14,9 @@
 <br>
 <table width="800" align="center" cellspacing="1">
   <tr align="center">
-    <td><a href="http://finance.sina.com.cn/realstock/company/<{$ticker}>/nc.shtml" target="_blank"><{$stock.name}></a></td>
+    <td><a href="http://finance.sina.com.cn/realstock/company/<{$ticker}>/nc.shtml" target="_blank">
+    <{if isset($stock.name)}><{$stock.name}><{/if}> 
+    </a></td>
   </tr>
 </table>
 <br>
