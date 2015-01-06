@@ -108,7 +108,7 @@ class Datas extends ABase
 		//DB::Debug();
 		$options['select'] = "*, FROM_UNIXTIME(days, '%Y-%m-%d') AS date";
 		$options['order'] = "ORDER BY days DESC";
-		$options['condition'] = "ticker='$ticker' AND days>=$from AND days<=$to";
+		$options['condition'] = "ticker LIKE '%$ticker' AND days>=$from AND days<=$to";
 		$info = DB::LimitQuery(self::$_table, $options);
 		foreach ($info as $k => $in){
 			$info[$k]['sname'] = $stock["name"];
