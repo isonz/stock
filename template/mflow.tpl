@@ -1,6 +1,5 @@
 <{include file="header.tpl"}>
 <br><br>
-
 <table width="98%" align="center" cellspacing="1" bgcolor="#cccccc">
   <tr align="center">
     <td bgcolor="#FFFFFF" style="padding-left:10px;">
@@ -12,8 +11,13 @@
     </td>
   </tr>
 </table>
-
-<br><br>
+<br>
+<table width="800" align="center" cellspacing="1" bgcolor="#cccccc">
+  <tr align="center">
+    <td bgcolor="#FFFFFF" style="padding:10px;"><{$stock.name}></td>
+  </tr>
+</table>
+<br>
 <table width="800" align="center" cellspacing="1" bgcolor="#cccccc">
   <tr align="center">
     <td bgcolor="#FFFFFF" style="padding:10px;">
@@ -30,8 +34,7 @@
     </td>
   </tr>
 </table>
-<br><br>
-
+<br>
 <table width="800" border="0" align="center" cellpadding="0" cellspacing="0">
   <tr>
     <td align="center"><table width="98%" border="0" cellspacing="1" cellpadding="0" bgcolor="#DCE5F4">
