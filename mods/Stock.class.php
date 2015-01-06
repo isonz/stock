@@ -17,7 +17,7 @@ class Stock extends ABase
 		$date_time = date('Y-m-d');
 		$info = self::getStock($ticker);
 		if(!$info){
-			return self::insert(array('ticker'=>$ticker, 'name'=>$name, 'update_at'=>$date_time));
+			return self::insert(array('ticker'=>$ticker, 'name'=>$name, 'update_at'=>$date_time, "created_at"=>$date_time));
 		}else{
 			return self::update(array('ticker'=>$ticker), array('name'=>$name, 'update_at'=>$date_time));
 		}
