@@ -3,6 +3,7 @@
 <div id="header">
 	<ul id="nav">
 		<li><a href="/">Home</a></li>
+		<li><a href="/new">New</a></li>
 		<li><a href="/stock">Stock</a></li>
 		<li><a href="/holder">Holder</a></li>
 		<li><a href="/mflow">MFlow</a></li>

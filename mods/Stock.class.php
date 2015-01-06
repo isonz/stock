@@ -27,6 +27,16 @@ class Stock extends ABase
 	{
 		return substr($ticker, 2);
 	}
+	
+	//最近10天上市
+	static function getNewStock($date_num = 10)
+	{
+		$today = date('Y-m-d');
+		$time = date('Y-m-d', strtotime("$today -$date_num day"));
+		//DB::Debug();
+		$info = self::getList("created_at>='$time'","*", "created_at DESC");
+		return $info;
+	}
 }
 
 
