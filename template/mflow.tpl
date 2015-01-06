@@ -12,9 +12,9 @@
   </tr>
 </table>
 <br>
-<table width="800" align="center" cellspacing="1" bgcolor="#cccccc">
+<table width="800" align="center" cellspacing="1">
   <tr align="center">
-    <td bgcolor="#FFFFFF" style="padding:10px;"><{$stock.name}></td>
+    <td><a href="http://finance.sina.com.cn/realstock/company/<{$ticker}>/nc.shtml" target="_blank"><{$stock.name}></a></td>
   </tr>
 </table>
 <br>
