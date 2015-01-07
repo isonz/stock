@@ -18,7 +18,7 @@
           <{foreach from=$data item=dt}>
           <tr bgcolor="#FFFFFF" align="center">
           	<td><{$dt.id}></td>
-		    <td><{$dt.days}></td>
+		    <td<{if $date == $dt.days}> style="background:#ff0"<{/if}>><{$dt.days}></td>
 		    <td><a href="stock?ticker=<{$dt.ticker}>" target="_blank"><{$dt.numb}></a></td>
 		    <td class="tdahidenname"><a href="http://finance.sina.com.cn/realstock/company/<{$dt.ticker}>/nc.shtml" target="_blank" class="hidename"><{$dt.sname}></a></td>
 		    <td><a href="http://finance.sina.com.cn/realstock/company/<{$dt.ticker}>/nc.shtml" target="_blank"><{$dt.ticker}></a></td>
