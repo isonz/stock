@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$("#hidename").toggle(
+	$("#hidename,#hidename1").toggle(
 		function(){
 			$("#hidename").removeAttr("class");
 			$(".tdahidenname a").removeAttr("class");

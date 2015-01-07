@@ -39,7 +39,7 @@
 	<td width="10%">ID</td>
     <td width="15%">时间</td>
     <td width="5%">次数</td>
-    <td width="15%" style="color:#fff">名称</td>
+    <td width="15%" class="hidename" id="hidename1">名称</td>
     <td width="15%">代码</td>
     <td width="10%">百分比</td>
     <td width="10%">当前值</td>
