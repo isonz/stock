@@ -9,7 +9,7 @@
             <td width="10%">ID</td>
 		    <td width="15%">时间</td>
 		    <td width="10%">次数</td>
-		    <td width="15%" style="color:#fff">名称</td>
+		    <td width="15%" class="hidename" id="hidename">名称</td>
 		    <td width="20%">代码</td>
 		    <td width="10%">百分比</td>
 		    <td width="10%">当前值</td>
@@ -20,7 +20,7 @@
           	<td><{$dt.id}></td>
 		    <td><{$dt.days}></td>
 		    <td><a href="stock?ticker=<{$dt.ticker}>" target="_blank"><{$dt.numb}></a></td>
-		    <td><a href="http://finance.sina.com.cn/realstock/company/<{$dt.ticker}>/nc.shtml" target="_blank" style="color:#fff"><{$dt.sname}></a></td>
+		    <td class="tdahidenname"><a href="http://finance.sina.com.cn/realstock/company/<{$dt.ticker}>/nc.shtml" target="_blank" class="hidename"><{$dt.sname}></a></td>
 		    <td><a href="http://finance.sina.com.cn/realstock/company/<{$dt.ticker}>/nc.shtml" target="_blank"><{$dt.ticker}></a></td>
 		    <td><a href="mflow?ticker=<{$dt.ticker}>&days=<{$dt.days}>" target="_blank"><{$dt.changepercent}></a></td>
 		    <td><{$dt.trade}></td>

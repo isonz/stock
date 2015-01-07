@@ -93,4 +93,6 @@ ul li{
 	text-align:center;
 	background: #C0F8C5;
 }
-
+.hidename,a.hidename{
+	color:#fff;
+}
