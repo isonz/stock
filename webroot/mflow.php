@@ -13,6 +13,7 @@ if($ticker && $days){
 	$stock = Stock::getStock($ticker);
 }
 
+Templates::Assign('page_title', $stock['name']);
 Templates::Assign('cvs', MFlow::$cvs);
 Templates::Assign('total', MFlow::$total);
 Templates::Assign('days', $days);
