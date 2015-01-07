@@ -385,8 +385,8 @@ class Sina
     				}
     			}
     		}
-    		if($is_sleep) sleep(20);
-    		echo date('Y-m-d H:i:s').": MFlows :$ticker \n";
+    		if($is_sleep) sleep(10);
+    		echo date('Y-m-d H:i:s').": $run_numb : MFlows :$ticker \n";
     	}
     	echo date('Y-m-d H:i:s').": All run MFlows: $run_numb \n";
     }    
