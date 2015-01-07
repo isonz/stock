@@ -65,7 +65,8 @@ class Datas extends ABase
 			$rs[$k.'_'.$i] = $dti;
 		}
 		unset($data,$dti,$dtj);
-		krsort($rs);
+		//krsort($rs);
+		ksort($rs);
 		
 		//-------------------- 检查数量为1的上一次是否停牌，如果不是除去
 		foreach ($rs as $k => $r){
