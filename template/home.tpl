@@ -47,6 +47,15 @@
     <td width="10%">振幅</td>
  </tr>
 </table>
-<a class="btn-primary btn-large btn" href="/?run=1">RUN</a>
-
+<a class="btn-primary btn-large btn" href="##">RUN</a>
+<br><br>
+<div class="hidename" style="line-height:30px; padding-left:20%;">
+1、主力买入不超过 70%。<br>
+2、主力买入与散户买入相差要大，最好 30%以上。<br>
+3、主力卖出不超过 10%。<br>
+4、开盘价要远大于前一天的收盘价。<br>
+5、成交量不要超过 10 万手。<br>
+6、起点好，或是之前有过很久停牌。<br>
+</div>
+<br>
 <{include file="footer.tpl"}>
