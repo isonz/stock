@@ -29,14 +29,13 @@ class MFlow extends ABase
 		return self::$_data;
 	}
 
-	static function setData($ticker, $data)
+	static function setData($days, $ticker, $data)
 	{
 		//DB::Debug();
 		if(isset($data['name'])) unset($data['name']);
 		if(isset($data['opendate'])) unset($data['opendate']);
 		if(isset($data['ticktime'])) unset($data['ticktime']);
 		
-		$days = date('Y-m-d');
 		$data['days'] = $days;
 		$data['ticker']	= $ticker;
 		$data['data'] = json_encode($data);

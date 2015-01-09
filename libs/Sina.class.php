@@ -2,11 +2,13 @@
 class Sina
 {
 	static private $_retry = 0;
+	static private $_date = null;
 	
 	//---------------------------------------- 数据
 	//数据入口函数，运行
 	static function dataRun()
 	{
+		self::$_date = date('Y-m-d');
 		if(self::stopDay()) return false;
 		$count = self::getStockCount();
 		$page_urls = self::getPageUrls($count, 80);
@@ -25,8 +27,7 @@ class Sina
 				$week = date('w');
 				if($stopday==$week || $stopday==$week) return true;
 			}else{
-				$day = date('Y-m-d');
-				if($day == $stopday) return true;
+				if(self::$_date == $stopday) return true;
 			}
 		}
 		return false;
@@ -48,7 +49,7 @@ class Sina
     	$runinfo = self::getRunInfo('SINA_STOCK_RUN');
     	$count = isset($runinfo['SINA_STOCK_COUNT']) ? (int)$runinfo['SINA_STOCK_COUNT'] : 0;
     	$count_date = isset($runinfo['SINA_STOCK_COUNT_DATE']) ? $runinfo['SINA_STOCK_COUNT_DATE'] : null;
-    	if($count>0 && $count_date==date('Y-m-d')) return $count;
+    	if($count>0 && $count_date==self::$_date) return $count;
     	
     	//没有今天的设置数据再请求网站上的
     	$url = Setting::getValue('SINA_STOCK_COUNT_URL');
@@ -63,7 +64,7 @@ class Sina
 		
 		//把网站上的数据存入设置数据表
 		$runinfo['SINA_STOCK_COUNT'] = $content;
-		$runinfo['SINA_STOCK_COUNT_DATE'] = date('Y-m-d');
+		$runinfo['SINA_STOCK_COUNT_DATE'] = self::$_date;
 		Setting::setValue('SINA_STOCK_RUN', json_encode($runinfo));
 		
 		return $content;
@@ -101,7 +102,7 @@ class Sina
     	$runinfo = self::getRunInfo('SINA_STOCK_RUN');
     	$page = isset($runinfo['SINA_STOCK_RUN_PAGE']) ? (int)$runinfo['SINA_STOCK_RUN_PAGE'] : 0;
     	$page_date = isset($runinfo['SINA_STOCK_RUN_PAGE_DATE']) ? $runinfo['SINA_STOCK_RUN_PAGE_DATE'] : null;
-    	if($page_date != date('Y-m-d')) $page = 0;
+    	if($page_date != self::$_date) $page = 0;
     	if($page >= count($urls)) return $page;
 
     	$encoding = Setting::getValue('SINA_ENCODE');
@@ -129,7 +130,7 @@ class Sina
     		
     		//把当前运行的页码存入设置数据表
     		$runinfo['SINA_STOCK_RUN_PAGE'] = $i;
-    		$runinfo['SINA_STOCK_RUN_PAGE_DATE'] = date('Y-m-d');
+    		$runinfo['SINA_STOCK_RUN_PAGE_DATE'] = self::$_date;
     		Setting::setValue('SINA_STOCK_RUN', json_encode($runinfo));
     		sleep(10);
     		echo date('Y-m-d H:i:s').": data:$url \n";
@@ -199,9 +200,9 @@ class Sina
     		if($liut_url){
     			$runinfo = self::getRunInfo('SINA_LIUTONG_HOLDER_PAGES');
     			$save_date = isset($runinfo[$ticker]) ? $runinfo[$ticker] : null;
-    			if(!$save_date || $save_date != date('Y-m-d')){
+    			if(!$save_date || $save_date != self::$_date){
     				if(self::getLiutongHolder($ticker, $liut_url)){
-    					$runinfo[$ticker] = date('Y-m-d');
+    					$runinfo[$ticker] = self::$_date;
     					Setting::setValue('SINA_LIUTONG_HOLDER_PAGES', json_encode($runinfo));
     					$liut_run_numb++;
     					$is_sleep++;
@@ -211,9 +212,9 @@ class Sina
     		if($main_url){
     			$runinfo = self::getRunInfo('SINA_MAIN_HOLDER_PAGES');
     			$save_date = isset($runinfo[$ticker]) ? $runinfo[$ticker] : null;
-    			if(!$save_date || $save_date != date('Y-m-d')){
+    			if(!$save_date || $save_date != self::$_date){
     				if(self::getMainHolder($ticker, $main_url)){
-    					$runinfo[$ticker] = date('Y-m-d');
+    					$runinfo[$ticker] = self::$_date;
     					Setting::setValue('SINA_MAIN_HOLDER_PAGES', json_encode($runinfo));
     					$main_run_numb++;
     					$is_sleep++;
@@ -376,9 +377,9 @@ class Sina
     		if($url){
     			$runinfo = self::getRunInfo('SINA_MONEY_FLOWS_DATA');
     			$save_date = isset($runinfo[$ticker]) ? $runinfo[$ticker] : null;
-    			if(!$save_date || $save_date != date('Y-m-d')){
+    			if(!$save_date || $save_date != self::$_date){
     				if(self::getMoneyFlowsData($ticker, $url)){
-    					$runinfo[$ticker] = date('Y-m-d');
+    					$runinfo[$ticker] = self::$_date;
     					Setting::setValue('SINA_MONEY_FLOWS_DATA', json_encode($runinfo));
     					$run_numb++;
     					$is_sleep++;
@@ -405,7 +406,7 @@ class Sina
     	$content = self::moneyFlowStrToJson($content);
     	$content = str_replace("}))", '}', str_replace("(({", '{', $content));
     	$content = json_decode($content, true);
-    	return MFlow::setData($ticker, $content);
+    	return MFlow::setData(self::$_date, $ticker, $content);
     }
     
     static function moneyFlowStrToJson($str)
@@ -443,7 +444,7 @@ class Sina
     
     static function tmpData($type, $str)
     {
-    	error_log(date('Y-m-d H:i:s')." : $str \n\t", 3, _LOGS . "stock/".$type."_".date('Y-m-d').'.log');
+    	error_log(date('Y-m-d H:i:s')." : $str \n\t", 3, _LOGS . "stock/".$type."_". self::$_date .'.log');
     }
 }
 
