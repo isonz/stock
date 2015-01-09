@@ -33,7 +33,7 @@
 		    <td><{$dt.date}></td>
 		    <td class="tdahidenname"><a href="http://finance.sina.com.cn/realstock/company/<{$dt.ticker}>/nc.shtml" target="_blank" class="hidename"><{$dt.sname}></a></td>
 		    <td><a href="http://finance.sina.com.cn/realstock/company/<{$dt.ticker}>/nc.shtml" target="_blank"><{$dt.ticker}></a></td>
-		    <td><a href="mflow?ticker=<{$dt.ticker}>&days=<{$dt.days}>" target="_blank"><{$dt.changepercent}></a></td>
+		    <td><a href="mflow?ticker=<{$dt.ticker}>&days=<{date("Y-m-d", $dt.days)}>" target="_blank"><{$dt.changepercent}></a></td>
 		    <td><{$dt.trade}></td>
 		    <td><{$dt.pricechange}></td>
           </tr>
