@@ -6,9 +6,10 @@ class Sina
 	
 	//---------------------------------------- 数据
 	//数据入口函数，运行
-	static function dataRun()
+	static function dataRun($date = null)
 	{
-		self::$_date = date('Y-m-d');
+		if(!$date) $date = date('Y-m-d');
+		self::$_date = $date;
 		if(self::stopDay()) return false;
 		$count = self::getStockCount();
 		$page_urls = self::getPageUrls($count, 80);

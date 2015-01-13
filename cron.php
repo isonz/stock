@@ -10,7 +10,8 @@ foreach (glob(_MODS."/*.php") as $mods){
 	require_once $mods;
 }
 
-Sina::dataRun();
+$date = isset($argv[1]) ? $argv[1] : null;
+Sina::dataRun($date);
 Sina::holderRun();
 
 
