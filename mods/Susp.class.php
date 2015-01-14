@@ -23,8 +23,8 @@ class Susp extends ABase
 		$name = $data['name'];
 		unset($data);
 
-		//--- 检查10天内是否有成交
-		$pdd = self::getPreDaysData($ticker, 10);
+		//--- 检查200天内是否有成交
+		$pdd = self::getPreDaysData($ticker, 200);
 		$pre = isset($pdd[0]) ? $pdd[0] : null;
 		if($pre){
 			if($pre['open'] > 0) return false;
