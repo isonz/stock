@@ -44,10 +44,10 @@ class Sina
 	}
 	
 	//获取总记录数
-    static function getStockCount()
+    static function getStockCount($name = 'SINA_STOCK_RUN')
     {
     	//先查询数据库是否有今天的设置数据
-    	$runinfo = self::getRunInfo('SINA_STOCK_RUN');
+    	$runinfo = self::getRunInfo($name);
     	$count = isset($runinfo['SINA_STOCK_COUNT']) ? (int)$runinfo['SINA_STOCK_COUNT'] : 0;
     	$count_date = isset($runinfo['SINA_STOCK_COUNT_DATE']) ? $runinfo['SINA_STOCK_COUNT_DATE'] : null;
     	if($count>0 && $count_date==self::$_date) return $count;
@@ -66,7 +66,7 @@ class Sina
 		//把网站上的数据存入设置数据表
 		$runinfo['SINA_STOCK_COUNT'] = $content;
 		$runinfo['SINA_STOCK_COUNT_DATE'] = self::$_date;
-		Setting::setValue('SINA_STOCK_RUN', json_encode($runinfo));
+		Setting::setValue($name, json_encode($runinfo));
 		
 		return $content;
     }
@@ -426,6 +426,62 @@ class Sina
     		}
     	}
     	return $json;
+    }
+    
+    //---------------------------------------- 停牌
+    //数据入口函数，运行
+    static function suspRun($date = null)
+    {
+    	if(!$date) $date = date('Y-m-d');
+    	self::$_date = $date;
+    	if(self::stopDay()) return false;
+    	$count = self::getStockCount("SINA_STOCK_SUSP_RUN");
+    	$page_urls = self::getPageUrls($count, 80);
+    	self::getSuspData($page_urls);
+    }
+    
+    static function getSuspData($urls)
+    {
+    	if(!$urls) return false;
+    	
+    	//查询数据库当前运行到哪一页
+    	$runinfo = self::getRunInfo('SINA_STOCK_SUSP_RUN');
+    	$page = isset($runinfo['SINA_SUSP_RUN_PAGE']) ? (int)$runinfo['SINA_SUSP_RUN_PAGE'] : 0;
+    	$page_date = isset($runinfo['SINA_SUSP_RUN_PAGE_DATE']) ? $runinfo['SINA_SUSP_RUN_PAGE_DATE'] : null;
+    	if($page_date != self::$_date) $page = 0;
+    	if($page >= count($urls)) return $page;
+    	
+    	$encoding = Setting::getValue('SINA_ENCODE');
+    	if(!$encoding) $encoding = 'GBK';
+    	for($i=$page+1; $i <=count($urls); $i++){
+    		$url = $urls[$i];
+    		$content = Func::curlGet($url);
+    		$content = self::retryUrkGet($content, $url, 20, 100);
+    		if(!$content) return false;
+    		 
+    		$content = mb_convert_encoding($content, _ENCODING, $encoding);
+    		self::tmpData('susp', $content);
+    	
+    		$content = self::strToJson($content);
+    		$content = json_decode($content, true);
+    		if(!$content) {
+    			sleep(1);
+    			continue;
+    		}
+    		foreach ($content as $data){
+    			$ticker = $data['symbol'];
+    			unset($data['symbol'], $data['code'], $data['ticktime']);
+    			Susp::setData($ticker, $data);
+    		}
+    	
+    		//把当前运行的页码存入设置数据表
+    		$runinfo['SINA_SUSP_RUN_PAGE'] = $i;
+    		$runinfo['SINA_SUSP_RUN_PAGE_DATE'] = self::$_date;
+    		Setting::setValue('SINA_STOCK_SUSP_RUN', json_encode($runinfo));
+    		sleep(1);
+    		echo date('Y-m-d H:i:s').": susp data:$url \n";
+    	}
+    	echo date('Y-m-d H:i:s').": All Susp run page number:$i \n";
     }
     
     //------------------------------------------- 公共

@@ -74,7 +74,7 @@ class Datas extends ABase
 				$pdd = self::getPreDaysData($r['ticker'],$day_num);
 				$pre = isset($pdd[1]) ? $pdd[1] : null;
 				if($pre){
-					if($pre['trade'] > 0) unset($rs[$k]);
+					if($pre['open'] > 0) unset($rs[$k]);
 				}
 			}
 		}
@@ -90,7 +90,7 @@ class Datas extends ABase
 		
 		//DB::Debug();
 		$table = self::$_table;
-		$sql = "SELECT id, FROM_UNIXTIME(days, '%Y-%m-%d') AS date, ticker, trade FROM $table 
+		$sql = "SELECT id, FROM_UNIXTIME(days, '%Y-%m-%d') AS date, ticker, trade, open FROM $table 
 				WHERE ticker='$ticker' AND ($from_date-days)<(3600*24*$day_num)
 				ORDER BY days DESC";
 		$stmt = DB::Execute($sql);
